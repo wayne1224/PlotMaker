@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>919</width>
-    <height>717</height>
+    <width>924</width>
+    <height>714</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,18 +16,27 @@
   <widget class="QWidget" name="verticalLayoutWidget">
    <property name="geometry">
     <rect>
-     <x>10</x>
+     <x>0</x>
      <y>0</y>
-     <width>901</width>
+     <width>921</width>
      <height>711</height>
     </rect>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0,0,0,0">
+   <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0,0,0,0,0">
     <property name="sizeConstraint">
      <enum>QLayout::SetDefaultConstraint</enum>
     </property>
+    <property name="leftMargin">
+     <number>20</number>
+    </property>
     <property name="topMargin">
-     <number>10</number>
+     <number>20</number>
+    </property>
+    <property name="rightMargin">
+     <number>20</number>
+    </property>
+    <property name="bottomMargin">
+     <number>20</number>
     </property>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
@@ -35,7 +44,7 @@
        <widget class="QLabel" name="lbl_di">
         <property name="font">
          <font>
-          <pointsize>10</pointsize>
+          <pointsize>12</pointsize>
          </font>
         </property>
         <property name="text">
@@ -53,7 +62,7 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>10</pointsize>
+          <pointsize>12</pointsize>
          </font>
         </property>
         <property name="editable">
@@ -70,7 +79,7 @@
        <widget class="QLabel" name="lbl_mu">
         <property name="font">
          <font>
-          <pointsize>10</pointsize>
+          <pointsize>12</pointsize>
          </font>
         </property>
         <property name="text">
@@ -93,10 +102,74 @@
       </item>
       <item>
        <widget class="QPushButton" name="btn_deleteScene">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>刪除此幕</string>
         </property>
        </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_7">
+      <property name="spacing">
+       <number>47</number>
+      </property>
+      <item>
+       <widget class="QLabel" name="lbl_sceneTitle">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+        <property name="text">
+         <string>標題：</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLineEdit" name="input_sceneTitle">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_4">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
       </item>
      </layout>
     </item>
@@ -118,7 +191,7 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>10</pointsize>
+          <pointsize>12</pointsize>
          </font>
         </property>
         <property name="text">
@@ -145,7 +218,7 @@
         </property>
         <property name="font">
          <font>
-          <pointsize>10</pointsize>
+          <pointsize>12</pointsize>
          </font>
         </property>
        </widget>
@@ -171,7 +244,7 @@
        <widget class="QLabel" name="lbl_role">
         <property name="font">
          <font>
-          <pointsize>10</pointsize>
+          <pointsize>12</pointsize>
          </font>
         </property>
         <property name="text">
@@ -183,7 +256,7 @@
        <widget class="QComboBox" name="cmb_role">
         <property name="font">
          <font>
-          <pointsize>10</pointsize>
+          <pointsize>12</pointsize>
          </font>
         </property>
         <property name="editable">
@@ -195,7 +268,7 @@
        <widget class="QLabel" name="lbl_utterance">
         <property name="font">
          <font>
-          <pointsize>10</pointsize>
+          <pointsize>12</pointsize>
          </font>
         </property>
         <property name="text">
@@ -207,7 +280,7 @@
        <widget class="QLineEdit" name="input_utterance">
         <property name="font">
          <font>
-          <pointsize>10</pointsize>
+          <pointsize>12</pointsize>
          </font>
         </property>
        </widget>
@@ -220,7 +293,7 @@
        <widget class="QLabel" name="lbl_scenario">
         <property name="font">
          <font>
-          <pointsize>10</pointsize>
+          <pointsize>12</pointsize>
          </font>
         </property>
         <property name="text">
@@ -232,7 +305,7 @@
        <widget class="QLineEdit" name="input_scenario">
         <property name="font">
          <font>
-          <pointsize>10</pointsize>
+          <pointsize>12</pointsize>
          </font>
         </property>
        </widget>
@@ -256,6 +329,11 @@
       </item>
       <item>
        <widget class="QPushButton" name="btn_add">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>新增</string>
         </property>
@@ -267,7 +345,7 @@
      <widget class="QTableWidget" name="tableWidget">
       <property name="font">
        <font>
-        <pointsize>10</pointsize>
+        <pointsize>12</pointsize>
        </font>
       </property>
       <column>
@@ -291,6 +369,11 @@
      <layout class="QHBoxLayout" name="horizontalLayout_6">
       <item>
        <widget class="QPushButton" name="btn_deleteRow">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>刪除列</string>
         </property>
@@ -311,6 +394,11 @@
       </item>
       <item>
        <widget class="QPushButton" name="btn_save">
+        <property name="font">
+         <font>
+          <pointsize>12</pointsize>
+         </font>
+        </property>
         <property name="text">
          <string>儲存</string>
         </property>
