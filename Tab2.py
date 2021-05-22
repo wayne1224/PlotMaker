@@ -1,5 +1,6 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PIL import ImageQt
+import Database.DBapi as db
 import sys
 import os
 
@@ -158,6 +159,7 @@ class Character(QtWidgets.QGroupBox):
         #signals
         self.photo_btn.clicked.connect(self.selectPhoto)
         self.delete_btn.clicked.connect(self.deleteLater)
+        self.photoPath = None
     
     def selectPhoto(self):
         filePath, _ = QtWidgets.QFileDialog.getOpenFileName(None,  
@@ -166,6 +168,7 @@ class Character(QtWidgets.QGroupBox):
                                     "Image Files(*.png *.jpg *.bmp)")
         if filePath and os.path.exists(filePath):
             self.label_photo.setPixmap(QtGui.QPixmap(filePath))
+            self.photoPath = filePath
 
     def save(self):
         profile = {}
@@ -174,9 +177,11 @@ class Character(QtWidgets.QGroupBox):
         profile['actor'] = self.input_Actor.text()
         profile['description'] = self.input_Desc.toPlainText()
 
-        # if self.label_photo.pixmap != None:
-        #     image = ImageQt.fromqpixmap(self.label_photo.grab())
-        #     print(image)
+        if self.photoPath != None:
+            #photoID =  api
+            #profile['photo'] = photoID
+            pass
+
         if profile['name'] == '' and profile['actor'] == '' and profile['description'] == '':
             return
 
@@ -350,8 +355,9 @@ class Tab2(QtWidgets.QWidget):
         Basic['characters'] = characters
 
         #接API
+        print(Basic)
     
-    def import(self):
+    def import_Doc(self):
         pass
 
     def retranslateUi(self):
