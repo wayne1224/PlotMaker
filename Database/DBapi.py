@@ -4,6 +4,7 @@ import time
 import calendar
 import gridfs
 import os
+from bson.objectid import ObjectId
 
 # connect to datebase
 def connectDB():
@@ -13,6 +14,8 @@ def connectDB():
     client = pymongo.MongoClient()
   
     try:
+        # host = os.environ.get('URI')
+        # print(host)
         host = "mongodb+srv://wayne1224:wayne1224@sandbox.qjd2q.mongodb.net/myFirstDatabase?authSource=admin&replicaSet=atlas-bu8995-shard-0&w=majority&readPreference=primary&appname=MongoDB%20Compass&retryWrites=true&ssl=true"
         client = pymongo.MongoClient(host , serverSelectionTimeoutMS = 10000) # Timeout 10s    
         db = client["PlotMaker"] # choose database
@@ -27,23 +30,29 @@ def connectDB():
         client.close()
         return False
 
-def upsertBasic():
-    pass
+def upsertBasic(objID , Basic): 
+    if objID:
+        pass
 
-def insertImg(f):
+def insertImg(path):
     grid = gridfs.GridFS(db)
-    #file = open('C:\\Users\\HAO\\Desktop\\Pic\\image0.jpg' , 'rb')
-    grid.put(f , filename = "test" , content_type = "jpg")
-    # file.close()
+    file = open(path , 'rb')
+    objId = grid.put(file)
+    file.close()
 
-def findImg():
-    grid = gridfs.GridFS(db , collection = "fs")
+    return objId
+   
+def findImg(objID):   
+    grid = gridfs.GridFS(db)
 
-    for i in grid.find():
-        print(i.filename)
-        # print(i.read())
+    if grid.exists({"_id" : objID}):
+        return grid.find_one({"_id" : objID}).read()
+        # return grid.get_last_version(filename = None , _id = objID).read()
+
+objID = ObjectId("60a8cd2855497c05787dbe12")
+path = 'C:\\Users\\HAO\\Desktop\\Pic\\image0.jpg'
 
 connectDB()
-insertImg()
-#findImg()
+# print(insertImg(path))
+# print(findImg(objID))
 
