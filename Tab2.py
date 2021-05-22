@@ -1,4 +1,5 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
+from PIL import ImageQt
 import sys
 import os
 
@@ -24,8 +25,7 @@ class CheckableComboBox(QtWidgets.QComboBox):
             item.setCheckState(QtCore.Qt.Unchecked)
         else:
             item.setCheckState(QtCore.Qt.Checked)
-        # calling method
-        self.check_items()
+        
   
     # method called by check_items
     def item_checked(self, index):
@@ -33,15 +33,20 @@ class CheckableComboBox(QtWidgets.QComboBox):
         item = self.model().item(index, 0)
         # return true if checked else false
         return item.checkState() == QtCore.Qt.Checked
-  
+    
+    def getName(self, index):
+        return self.model().item(index, 0).text()
+
     # calling method
-    def check_items(self):
+    def getItems(self):
         checkedItems = []
         # traversing the items
         for i in range(self.count()):
             # if item is checked add it to the list
             if self.item_checked(i):
-                checkedItems.append(i)
+                checkedItems.append(self.getName(i))
+        return checkedItems
+        
     # flush
     sys.stdout.flush()
 
@@ -161,6 +166,22 @@ class Character(QtWidgets.QGroupBox):
                                     "Image Files(*.png *.jpg *.bmp)")
         if filePath and os.path.exists(filePath):
             self.label_photo.setPixmap(QtGui.QPixmap(filePath))
+
+    def save(self):
+        profile = {}
+
+        profile['name'] = self.input_Role.text()
+        profile['actor'] = self.input_Actor.text()
+        profile['description'] = self.input_Desc.toPlainText()
+
+        # if self.label_photo.pixmap != None:
+        #     image = ImageQt.fromqpixmap(self.label_photo.grab())
+        #     print(image)
+        if profile['name'] == '' and profile['actor'] == '' and profile['description'] == '':
+            return
+
+        return profile
+
     
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
@@ -216,17 +237,17 @@ class Tab2(QtWidgets.QWidget):
         self.label_2.setFont(font)
         self.label_2.setObjectName("label_2")
         self.horizontalLayout_2.addWidget(self.label_2)
-        self.input_Playwright = QtWidgets.QLineEdit(self.verticalLayoutWidget)
+        self.input_author = QtWidgets.QLineEdit(self.verticalLayoutWidget)
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Preferred, QtWidgets.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.input_Playwright.sizePolicy().hasHeightForWidth())
-        self.input_Playwright.setSizePolicy(sizePolicy)
+        sizePolicy.setHeightForWidth(self.input_author.sizePolicy().hasHeightForWidth())
+        self.input_author.setSizePolicy(sizePolicy)
         font = QtGui.QFont()
         font.setPointSize(12)
-        self.input_Playwright.setFont(font)
-        self.input_Playwright.setObjectName("input_Playwright")
-        self.horizontalLayout_2.addWidget(self.input_Playwright)
+        self.input_author.setFont(font)
+        self.input_author.setObjectName("input_author")
+        self.horizontalLayout_2.addWidget(self.input_author)
         self.verticalLayout_2.addLayout(self.horizontalLayout_2)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
         self.horizontalLayout_3.setObjectName("horizontalLayout_3")
@@ -306,10 +327,32 @@ class Tab2(QtWidgets.QWidget):
         self.retranslateUi()
 
         #signals
-        self.addRole_btn.clicked.connect(self.addCharacter)
+        self.addRole_btn.clicked.connect(self._addCharacter)
 
-    def addCharacter(self):
+    def _addCharacter(self):
+        self.save()
         self.rolesLayout.addWidget(Character())
+       
+    def save(self):
+        Basic = {}
+        characters = []
+
+        #Iterate over Characters
+        for i in range(self.rolesLayout.count()):
+            char = self.rolesLayout.itemAt(i).widget().save()
+            if char != None:
+                characters.append(char)
+
+        Basic['plotName'] = self.input_name.text()
+        Basic['author'] = self.input_author.text()
+        Basic['outline'] = self.textEdit.toPlainText()
+        Basic['type'] = self.comboBox.getItems()
+        Basic['characters'] = characters
+
+        #接API
+    
+    def import(self):
+        pass
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
@@ -319,7 +362,6 @@ class Tab2(QtWidgets.QWidget):
         self.label_4.setText(_translate("", "概要："))
         self.label_5.setText(_translate("", "角色："))
         self.addRole_btn.setText(_translate("", "新增角色"))
-
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
