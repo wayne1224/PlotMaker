@@ -10,8 +10,8 @@ class CheckableComboBox(QtWidgets.QComboBox):
         self.view().pressed.connect(self.handle_item_pressed)
         self.setModel(QtGui.QStandardItemModel(self))
 
-        types = ['動作','喜劇','愛情','恐怖','科幻','其他']
-        for i, type in enumerate(types):
+        self.types = ['動作','喜劇','愛情','恐怖','科幻','其他']
+        for i, type in enumerate(self.types):
             self.addItem(type)
             item = self.model().item(i, 0)
             # setting item unchecked
@@ -46,6 +46,12 @@ class CheckableComboBox(QtWidgets.QComboBox):
             if self.item_checked(i):
                 checkedItems.append(self.getName(i))
         return checkedItems
+
+    def setCheckState(self, checkedItems):
+        for i in checkedItems:
+            idx = self.types.index(i)
+            item = self.model().item(idx, 0)
+            item.setCheckState(QtCore.Qt.Checked)
 
     def clear(self):
         for i in range(self.count()):
@@ -165,6 +171,17 @@ class Character(QtWidgets.QGroupBox):
         self.photo_btn.clicked.connect(self.selectPhoto)
         self.delete_btn.clicked.connect(self.deleteLater)
         self.photoPath = None
+        self.photoID = None
+    
+    def setup(self, char):
+        self.input_Role.setText(char['name'])
+        self.input_Actor.setText(char['actor'])
+        self.input_Desc.setPlainText(char['description'])
+        self.photoID = char['photo']
+        photoBytes = db.findImg(char['photo'])
+        pixmap = QtGui.QPixmap()
+        pixmap.loadFromData(photoBytes)
+        self.label_photo.setPixmap(pixmap)
     
     def selectPhoto(self):
         filePath, _ = QtWidgets.QFileDialog.getOpenFileName(None,  
@@ -182,9 +199,12 @@ class Character(QtWidgets.QGroupBox):
         profile['actor'] = self.input_Actor.text()
         profile['description'] = self.input_Desc.toPlainText()
 
-        if self.photoPath != None:
+        if self.photoPath != None: #新圖片或換圖片
             photoID =  db.insertImg(self.photoPath)
             profile['photo'] = photoID
+        
+        elif self.photoID != None: #原圖片
+            profile['photo'] = self.photoID
 
         if all(value == '' for value in profile.values()):
             return
@@ -394,7 +414,17 @@ class Tab2(QtWidgets.QWidget):
     
     @QtCore.pyqtSlot(dict)
     def import_Doc(self, doc):
-        pass
+        #先清除
+        self.clear()
+        #匯入
+        self.input_name.setText(doc['plotName'])
+        self.input_author.setText(doc['author'])
+        self.textEdit.setPlainText(doc['outline'])
+        self.comboBox.setCheckState(doc['type'])
+        for i, char in enumerate(doc['characters']):
+            if i > 2:
+                self._addCharacter()
+            self.rolesLayout.itemAt(i).widget().setup(char)
 
     def clear(self):
         self.input_name.clear()

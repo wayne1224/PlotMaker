@@ -25,6 +25,9 @@ class MainWindow(QtWidgets.QMainWindow):
         self.mainTab.addTab(self.tab2, "簡介與角色")
         self.mainTab.addTab(self.tab3, "劇情內容")
 
+        #Signals
+        self.tab1.procDoc.connect(self.tab2.import_Doc)
+
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
