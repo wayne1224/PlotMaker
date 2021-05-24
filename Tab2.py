@@ -1,8 +1,8 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PIL import ImageQt
 import Database.DBapi as db
 import sys
 import os
+from datetime import datetime as dt
 
 class CheckableComboBox(QtWidgets.QComboBox):
     def __init__(self):
@@ -26,7 +26,6 @@ class CheckableComboBox(QtWidgets.QComboBox):
             item.setCheckState(QtCore.Qt.Unchecked)
         else:
             item.setCheckState(QtCore.Qt.Checked)
-        
   
     # method called by check_items
     def item_checked(self, index):
@@ -47,6 +46,12 @@ class CheckableComboBox(QtWidgets.QComboBox):
             if self.item_checked(i):
                 checkedItems.append(self.getName(i))
         return checkedItems
+
+    def clear(self):
+        for i in range(self.count()):
+            if self.item_checked(i):
+                item = self.model().item(i, 0)
+                item.setCheckState(QtCore.Qt.Unchecked)
         
     # flush
     sys.stdout.flush()
@@ -172,20 +177,25 @@ class Character(QtWidgets.QGroupBox):
 
     def save(self):
         profile = {}
-
+        
         profile['name'] = self.input_Role.text()
         profile['actor'] = self.input_Actor.text()
         profile['description'] = self.input_Desc.toPlainText()
 
         if self.photoPath != None:
-            #photoID =  api
-            #profile['photo'] = photoID
-            pass
+            photoID =  db.insertImg(self.photoPath)
+            profile['photo'] = photoID
 
-        if profile['name'] == '' and profile['actor'] == '' and profile['description'] == '':
+        if all(value == '' for value in profile.values()):
             return
 
         return profile
+    
+    def clear(self):
+        self.input_Role.clear()
+        self.input_Actor.clear()
+        self.input_Desc.clear()
+        self.label_photo.clear()
 
     
     def retranslateUi(self):
@@ -329,13 +339,28 @@ class Tab2(QtWidgets.QWidget):
         self.scroll.setWidget(self.widget)
         self.verticalLayout_3.addWidget(self.scroll)
         
+        #Action Button
+        self.actionLayout = QtWidgets.QHBoxLayout()
+        self.clear_btn = QtWidgets.QPushButton()
+        self.clear_btn.setFont(font)
+        self.save_btn = QtWidgets.QPushButton()
+        self.save_btn.setFont(font)
+        self.actionLayout.addWidget(self.clear_btn)
+        self.actionLayout.addItem(spacerItem)
+        self.actionLayout.addWidget(self.save_btn)
+        self.verticalLayout_3.addLayout(self.actionLayout)
+
         self.retranslateUi()
 
         #signals
         self.addRole_btn.clicked.connect(self._addCharacter)
+        self.save_btn.clicked.connect(self.save)
+        self.clear_btn.clicked.connect(self.clear)
+
+        #save object_id
+        self._id = None
 
     def _addCharacter(self):
-        self.save()
         self.rolesLayout.addWidget(Character())
        
     def save(self):
@@ -354,12 +379,31 @@ class Tab2(QtWidgets.QWidget):
         Basic['type'] = self.comboBox.getItems()
         Basic['characters'] = characters
 
-        #接API
-        print(Basic)
+        if self._id == None:
+            Basic['createTime'] = dt.now().strftime("%Y/%m/%d %H:%M:%S")
+
+        if db.upsertBasic(Basic):
+            informBox = QtWidgets.QMessageBox.information(self, '通知','資料更新成功', QtWidgets.QMessageBox.Ok)
+        else:
+            informBox = QtWidgets.QMessageBox.information(self, '通知','資料儲存失敗', QtWidgets.QMessageBox.Ok)
+
+        if '_id' in Basic:
+            self._id = Basic['_id']
+
+        print(Basic['_id'])
     
-    def import_Doc(self):
+    @QtCore.pyqtSlot(dict)
+    def import_Doc(self, doc):
         pass
 
+    def clear(self):
+        self.input_name.clear()
+        self.input_author.clear()
+        self.textEdit.clear()
+        self.comboBox.clear()
+        for i in range(self.rolesLayout.count()):
+            self.rolesLayout.itemAt(i).widget().clear()
+                
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
         self.label.setText(_translate("", "劇名："))
@@ -368,6 +412,8 @@ class Tab2(QtWidgets.QWidget):
         self.label_4.setText(_translate("", "概要："))
         self.label_5.setText(_translate("", "角色："))
         self.addRole_btn.setText(_translate("", "新增角色"))
+        self.clear_btn.setText(_translate("", "全部清除"))
+        self.save_btn.setText(_translate("", "儲存"))
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
