@@ -227,6 +227,11 @@ class Tab3(QtWidgets.QWidget):
         self.tableWidget.cellClicked.connect(self._checkCharacter)
 
         # 視窗
+        # 輸入數字以外的幕數
+        self.msg_sceneNotNum = QtWidgets.QMessageBox()
+        self.msg_sceneNotNum.setWindowTitle("提示")
+        self.msg_sceneNotNum.setText("幕數只能輸入數字！")
+        self.msg_sceneNotNum.setIcon(QtWidgets.QMessageBox.Information)
         # 未輸入、選擇角色
         self.msg_characterNotSelect = QtWidgets.QMessageBox()
         self.msg_characterNotSelect.setWindowTitle("提示")
@@ -261,7 +266,7 @@ class Tab3(QtWidgets.QWidget):
         item = self.tableWidget.horizontalHeaderItem(0)
         item.setText(_translate("", "角色"))
         item = self.tableWidget.horizontalHeaderItem(1)
-        item.setText(_translate("", "對話內容"))
+        item.setText(_translate("", "台詞"))
         item = self.tableWidget.horizontalHeaderItem(2)
         item.setText(_translate("", "語境"))
         self.btn_deleteRow.setText(_translate("", "刪除列"))
@@ -281,15 +286,20 @@ class Tab3(QtWidgets.QWidget):
         self.sceneNum.remove(self.currentScene)
         self.cmb_sceneNum.removeItem(self.cmb_sceneNum.findText(self.currentScene))
         self.cmb_sceneNum.setCurrentIndex(0)
+        self.currentScene = self.cmb_sceneNum.currentText()
 
     # 儲存幕
     def saveScene(self):
         if not self.cmb_sceneNum.currentText() == "":
-            if self.cmb_sceneNum.findText(self.cmb_sceneNum.currentText()) < 0:  # 新的一幕
-                self.sceneNum.append(self.cmb_sceneNum.currentText())
-                self.cmb_sceneNum.addItem(self.cmb_sceneNum.currentText())
-                self.cmb_sceneNum.setCurrentIndex(self.cmb_sceneNum.count()-1)
-                self.currentScene = self.cmb_sceneNum.currentText()
+            if self.cmb_sceneNum.currentText().isnumeric():
+                if self.cmb_sceneNum.findText(self.cmb_sceneNum.currentText()) < 0:  # 新的一幕
+                    self.sceneNum.append(self.cmb_sceneNum.currentText())
+                    self.cmb_sceneNum.addItem(self.cmb_sceneNum.currentText())
+                    self.cmb_sceneNum.setCurrentIndex(self.cmb_sceneNum.count()-1)
+                    self.currentScene = self.cmb_sceneNum.currentText()
+                    self.cmb_sceneNum.model().sort(0)  # 排序
+            else:
+                self.msg_sceneNotNum.exec_()
 
     # 檢查、更新角色選單
     def _checkCharacter(self):
