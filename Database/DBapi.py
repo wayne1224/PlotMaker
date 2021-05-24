@@ -26,7 +26,6 @@ def connectDB():
         client.close()
         return False
 
-
 # Tab1 api
 def findDocs(plotName , author , actor):
     try:
@@ -48,42 +47,38 @@ def findDocs(plotName , author , actor):
     except pymongo.errors.PyMongoError as e:
         return False
 
-# Basic api
-def upsertBasic(data , objID = None):  #  return result = list() ["insert" or "update" , "true" or "false"]
+# Tab2 api
+def upsertBasic(data , objID = None):  #  return True , False
     Basic = db["Basic"] # choose collection
-    result = ["" , ""]
 
     #update
     if objID:
-        result[0] = "update" 
         try:
             Basic.update_one({"_id" : objID} , {"$set" : {
                                                         "plotName" : data["plotName"] , 
                                                         "author" : data["author"] , 
                                                         "outline" : data["outline"] , 
                                                         "type" : data["type"],
-                                                        "charaters" : data["charaters"]
+                                                        "charaters" : data["charaters"],
                                                         }
                                                 }
             )
-            result[1] = True
+
+            return True
         except pymongo.errors.PyMongoError as e:
-            result[1] = False
+            return False
     # insert
     else:
         Content = db["Content"]
-        result[0] = "insert"
-        
+      
         try:
             BasicID = Basic.insert_one(data).inserted_id
             Content.insert_one({"BasicID" : BasicID , "plotName" : data["plotName"] , "content" : None})
-            result[1] = True
+            return True
         except pymongo.errors.PyMongoError as e:
-            result[1] = False    
+            return False   
 
-    return result
-
-# Content api
+# Tab3 api
 def updateContent(BasicID , plotName , content):
     Content = db["Content"]
     query = {"BasicID" : BasicID , "plotName" : plotName}
