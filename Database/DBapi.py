@@ -4,6 +4,9 @@ import time
 import calendar
 import gridfs
 import os
+import io
+import PIL.Image as Image
+
 from bson.objectid import ObjectId
 
 # connect to datebase
@@ -47,6 +50,31 @@ def findDocs(plotName , author , actor):
     except pymongo.errors.PyMongoError as e:
         return False
 
+def deleteDocs(objID):
+    try:
+        Basic = db["Basic"]
+        Content = db["Content"]
+        queryB = {"_id" : objID}
+        queryC = {"BasicID" : objID}
+
+        Basic.delete_one(queryB)
+        Content.delete_one(queryC)
+
+        return True
+       
+    except pymongo.errors.PyMongoError as e:
+        return False
+
+def findContent(objID):
+    try:
+        Content = db["Content"]
+        query = {"BasicID" : objID}
+
+        return Content.find_one(query)
+        
+    except pymongo.errors.PyMongoError as e:
+        return False
+
 # Tab2 api
 def upsertBasic(data , objID = None):  #  return True , False
     Basic = db["Basic"] # choose collection
@@ -73,19 +101,20 @@ def upsertBasic(data , objID = None):  #  return True , False
       
         try:
             BasicID = Basic.insert_one(data).inserted_id
-            Content.insert_one({"BasicID" : BasicID , "plotName" : data["plotName"] , "content" : None})
+            Content.insert_one({"BasicID" : BasicID , "scene" : None})
             return True
         except pymongo.errors.PyMongoError as e:
             return False   
 
 # Tab3 api
-def updateContent(BasicID , plotName , content):
+def updateContent(BasicID , scene):
     Content = db["Content"]
-    query = {"BasicID" : BasicID , "plotName" : plotName}
+    query = {"BasicID" : BasicID}
 
     try:
-        Content.update_one(query , {"$set" : {"Content" : content}})
+        Content.update_one(query , {"$set" : {"scene" : scene}})
         return True
+
     except pymongo.errors.PyMongoError as e:
         return False
     
@@ -104,10 +133,11 @@ def findImg(objID):
 
         if grid.exists({"_id" : objID}):
             return grid.find_one({"_id" : objID}).read()
+            
     except pymongo.errors.PyMongoError as e:
         return False
 
-objID = ObjectId("60a8cd2855497c05787dbe12")
+objID = ObjectId("60abb3d055497c23f46a9aae")
 path = 'C:\\Users\\HAO\\Desktop\\Pic\\image0.jpg'
 
 data = {
@@ -118,12 +148,17 @@ data = {
     "outline" : "outline"
 }
 
+scene = [{"num" : 1 , "title" : "001" , "outline" : "001" , "content" : {"role" : "A" , "utterance" : "FUCK UP" , "scenario" : "情境"}}]
+
 connectDB()
 
 # for i in findDocs("" , "" , "本名1"):
 #     print(i)
 
-# print(upsertBasic("" , data))
+# print(upsertBasic(data))
 
 # print(insertImg(path))
-# print(findImg(objID))
+img = findImg(objID)
+print(io.BytesIO(img))
+img = Image.open(io.BytesIO(img))
+img.show()
