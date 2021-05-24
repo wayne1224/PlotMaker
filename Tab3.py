@@ -266,7 +266,7 @@ class Tab3(QtWidgets.QWidget):
         item = self.tableWidget.horizontalHeaderItem(0)
         item.setText(_translate("", "角色"))
         item = self.tableWidget.horizontalHeaderItem(1)
-        item.setText(_translate("", "對話內容"))
+        item.setText(_translate("", "台詞"))
         item = self.tableWidget.horizontalHeaderItem(2)
         item.setText(_translate("", "語境"))
         self.btn_deleteRow.setText(_translate("", "刪除列"))
