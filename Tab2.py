@@ -1,5 +1,4 @@
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PIL import ImageQt
 import Database.DBapi as db
 import sys
 import os
