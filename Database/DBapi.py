@@ -49,7 +49,7 @@ def findDocs(plotName , author , actor):
         return False
 
 # Basic api
-def upsertBasic(objID , data): 
+def upsertBasic(data , objID = None):  #  return result = list() ["insert" or "update" , "true" or "false"]
     Basic = db["Basic"] # choose collection
     result = ["" , ""]
 
@@ -132,4 +132,3 @@ connectDB()
 
 # print(insertImg(path))
 # print(findImg(objID))
-
