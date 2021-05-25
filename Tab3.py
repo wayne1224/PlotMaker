@@ -71,6 +71,7 @@ class Tab3(QtWidgets.QWidget):
         self.horizontalLayout_7.addItem(spacerItem1)
         layout.addLayout(self.horizontalLayout_7)
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
+        self.horizontalLayout_2.setContentsMargins(-1, -1, -1, 25)
         self.horizontalLayout_2.setSizeConstraint(QtWidgets.QLayout.SetDefaultConstraint)
         self.horizontalLayout_2.setObjectName("horizontalLayout_2")
         self.lbl_scenePlot = QtWidgets.QLabel()
@@ -85,31 +86,19 @@ class Tab3(QtWidgets.QWidget):
         self.lbl_scenePlot.setAlignment(QtCore.Qt.AlignLeading | QtCore.Qt.AlignLeft | QtCore.Qt.AlignTop)
         self.lbl_scenePlot.setObjectName("lbl_scenePlot")
         self.horizontalLayout_2.addWidget(self.lbl_scenePlot)
-        self.txt_scenePlot = QtWidgets.QTextEdit()
+        self.txt_sceneOutline = QtWidgets.QTextEdit()
         sizePolicy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.txt_scenePlot.sizePolicy().hasHeightForWidth())
-        self.txt_scenePlot.setSizePolicy(sizePolicy)
-        self.txt_scenePlot.setMaximumSize(QtCore.QSize(16777215, 80))
+        sizePolicy.setHeightForWidth(self.txt_sceneOutline.sizePolicy().hasHeightForWidth())
+        self.txt_sceneOutline.setSizePolicy(sizePolicy)
+        self.txt_sceneOutline.setMaximumSize(QtCore.QSize(16777215, 80))
         font = QtGui.QFont()
         font.setPointSize(12)
-        self.txt_scenePlot.setFont(font)
-        self.txt_scenePlot.setObjectName("txt_scenePlot")
-        self.horizontalLayout_2.addWidget(self.txt_scenePlot)
+        self.txt_sceneOutline.setFont(font)
+        self.txt_sceneOutline.setObjectName("txt_sceneOutline")
+        self.horizontalLayout_2.addWidget(self.txt_sceneOutline)
         layout.addLayout(self.horizontalLayout_2)
-        self.horizontalLayout_8 = QtWidgets.QHBoxLayout()
-        self.horizontalLayout_8.setContentsMargins(-1, -1, -1, 25)
-        self.horizontalLayout_8.setObjectName("horizontalLayout_8")
-        spacerItem2 = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
-        self.horizontalLayout_8.addItem(spacerItem2)
-        self.btn_saveScene = QtWidgets.QPushButton()
-        font = QtGui.QFont()
-        font.setPointSize(12)
-        self.btn_saveScene.setFont(font)
-        self.btn_saveScene.setObjectName("btn_saveScene")
-        self.horizontalLayout_8.addWidget(self.btn_saveScene)
-        layout.addLayout(self.horizontalLayout_8)
         self.line = QtWidgets.QFrame()
         self.line.setFrameShape(QtWidgets.QFrame.HLine)
         self.line.setFrameShadow(QtWidgets.QFrame.Sunken)
@@ -217,9 +206,9 @@ class Tab3(QtWidgets.QWidget):
             2, QtWidgets.QHeaderView.Stretch)
 
         # 事件
-        self.cmb_sceneNum.currentIndexChanged.connect(self.setScene)
+        self.cmb_sceneNum.currentTextChanged.connect(self.changeScene)
         self.btn_deleteScene.clicked.connect(self._deleteScene)
-        self.btn_saveScene.clicked.connect(self.saveScene)
+        self.btn_save.clicked.connect(self.save)
         self.btn_add.clicked.connect(self._addRow)
         self.input_utterance.returnPressed.connect(self._addRow)
         self.input_scenario.returnPressed.connect(self._addRow)
@@ -232,6 +221,11 @@ class Tab3(QtWidgets.QWidget):
         self.msg_sceneNotNum.setWindowTitle("提示")
         self.msg_sceneNotNum.setText("幕數只能輸入數字！")
         self.msg_sceneNotNum.setIcon(QtWidgets.QMessageBox.Information)
+        # 只剩一幕的話不能刪除
+        self.msg_oneLeftSceneDelete = QtWidgets.QMessageBox()
+        self.msg_oneLeftSceneDelete.setWindowTitle("提示")
+        self.msg_oneLeftSceneDelete.setText("只剩一幕不能刪除！")
+        self.msg_oneLeftSceneDelete.setIcon(QtWidgets.QMessageBox.Information)
         # 未輸入、選擇角色
         self.msg_characterNotSelect = QtWidgets.QMessageBox()
         self.msg_characterNotSelect.setWindowTitle("提示")
@@ -243,11 +237,14 @@ class Tab3(QtWidgets.QWidget):
         self.msg_deleteNotSelect.setText("請選取至少一整列刪除！")
         self.msg_deleteNotSelect.setIcon(QtWidgets.QMessageBox.Information)
 
-        self.sceneNum = ["1"]  # 幕
-        self.currentScene = "1"  # 目前所選的幕
-        self.sceneTitle = ""  # 標題
-        self.sceneContent = ""  # 劇情內容
+        self.sceneNum = [1]  # 幕
+        self.currentSceneNum = 1  # 目前所選的幕
+        self.title = ""  # 標題
+        self.outline = ""  # 劇情內容
         self.character = []  # 角色
+        self.currentContent = []  # 目前幕的角色台詞
+        self.currentSceneContent = {}  # 目前幕的所有內容
+        self.allScenes = []  # 全部幕的內容
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
@@ -257,7 +254,6 @@ class Tab3(QtWidgets.QWidget):
         self.btn_deleteScene.setText(_translate("", "刪除此幕"))
         self.lbl_sceneTitle.setText(_translate("", "標題："))
         self.lbl_scenePlot.setText(_translate("", "詳細劇情："))
-        self.btn_saveScene.setText(_translate("", "儲存此幕"))
         self.lbl_role.setText(_translate("", "角色："))
         self.cmb_character.setItemText(1, _translate("", "語境"))
         self.lbl_utterance.setText(_translate("", "對話："))
@@ -270,36 +266,122 @@ class Tab3(QtWidgets.QWidget):
         item = self.tableWidget.horizontalHeaderItem(2)
         item.setText(_translate("", "語境"))
         self.btn_deleteRow.setText(_translate("", "刪除列"))
-        self.btn_save.setText(_translate("", "儲存"))
+        self.btn_save.setText(_translate("", "儲存內容"))
 
     # 清空輸入欄
     def clearInput(self):
         self.input_utterance.clear()
         self.input_scenario.clear()
 
+    # 換幕時清空
+    def clearSceneInput(self):
+        self.input_sceneTitle.clear()
+        self.txt_sceneOutline.clear()
+        self.cmb_character.clear()
+        self.cmb_character.addItem("")
+        self.cmb_character.addItem("語境")
+        self.tableWidget.setRowCount(0)
+
+    # change scene
+    def changeScene(self):
+        if not self.cmb_sceneNum.currentText() == "":
+            if self.cmb_sceneNum.currentText().isnumeric():
+                if not int(self.cmb_sceneNum.currentText()) in self.sceneNum:  # 新的一幕
+                    self.saveSceneContent()
+                    self._newScene()
+                else:  # 選擇已有的一幕
+                    self.saveSceneContent()
+                    self._oldScene()
+                self.setScene()
+            else:
+                self.msg_sceneNotNum.exec_()
+                self.cmb_sceneNum.setCurrentText(self.currentSceneNum.__str__())
+
+    # save scene content
+    def saveSceneContent(self):
+        content = []
+        for rowIndex in range(self.tableWidget.rowCount()):
+            rowContent = {'role': '', 'utterance': '', 'scenario': ''}
+            rowContent['role'] = self.tableWidget.item(rowIndex, 0).text()
+            rowContent['utterance'] = self.tableWidget.item(rowIndex, 1).text()
+            rowContent['scenario'] = self.tableWidget.item(rowIndex, 2).text()
+            content.append(rowContent)
+        self.currentSceneContent['num'] = self.currentSceneNum
+        self.currentSceneContent['title'] = self.input_sceneTitle.text()
+        self.currentSceneContent['outline'] = self.txt_sceneOutline.toPlainText()
+        self.currentSceneContent['content'] = content
+
+        isNew = True
+        for i in range(self.allScenes.__len__()):
+            if self.allScenes[i]['num'] == self.currentSceneContent['num']:  # 舊的一幕
+                self.allScenes[i] = self.currentSceneContent
+                isNew = False
+        if isNew:  # 新的一幕
+            self.allScenes.append(self.currentSceneContent)
+        print(self.allScenes)
+
+    # change to new scene
+    def _newScene(self):
+        newScene = self.cmb_sceneNum.currentText()
+        self.cmb_sceneNum.addItem(self.cmb_sceneNum.currentText())
+        self.sceneNum.append(int(newScene))
+        self.currentSceneNum = int(newScene)
+
+        self.cmb_sceneNum.blockSignals(True)  # 擋住 currentTextChanged signal
+
+        # 排序
+        temp = []
+        for i in range(self.cmb_sceneNum.count()):
+            temp.append(int(self.cmb_sceneNum.itemText(i)))
+        temp.sort()
+        self.cmb_sceneNum.clear()
+        for i in temp:
+            self.cmb_sceneNum.addItem(i.__str__())
+        
+        self.cmb_sceneNum.setCurrentIndex(self.cmb_sceneNum.findText(self.currentSceneNum.__str__()))
+        self.cmb_sceneNum.blockSignals(False)
+
+    # change to old scene
+    def _oldScene(self):
+        self.currentSceneNum = int(self.cmb_sceneNum.currentText())
+
     # set scene
     def setScene(self):
-        self.currentScene = self.cmb_sceneNum.currentText()
+        self.currentSceneContent = {}
+        for item in self.allScenes:
+            if item['num'] == self.currentSceneNum:
+                self.currentSceneContent = item
+
+        self.clearSceneInput()
+        if self.currentSceneContent:
+            self.input_sceneTitle.setText(self.currentSceneContent['title'])
+            self.txt_sceneOutline.setText(self.currentSceneContent['outline'])
+            self.setTable(self.currentSceneContent['content'])
 
     # 刪除幕
     def _deleteScene(self):
-        self.sceneNum.remove(self.currentScene)
-        self.cmb_sceneNum.removeItem(self.cmb_sceneNum.findText(self.currentScene))
-        self.cmb_sceneNum.setCurrentIndex(0)
-        self.currentScene = self.cmb_sceneNum.currentText()
+        if self.cmb_sceneNum.count() > 1:
+            self.sceneNum.remove(self.currentSceneNum)
+            temp = None
+            for item in self.allScenes:
+                if item['num'] == self.currentSceneNum:
+                    temp = item
+                    break
+            if temp:
+                self.allScenes.remove(temp)
+            print(self.allScenes)
+            self.cmb_sceneNum.blockSignals(True)
+            self.cmb_sceneNum.removeItem(self.cmb_sceneNum.findText(self.currentSceneNum.__str__()))
+            self.cmb_sceneNum.setCurrentIndex(0)
+            self.cmb_sceneNum.blockSignals(False)
+            self.currentSceneNum = int(self.cmb_sceneNum.currentText())
+            self.setScene()
+        else:
+            self.msg_oneLeftSceneDelete.exec_()
 
-    # 儲存幕
-    def saveScene(self):
-        if not self.cmb_sceneNum.currentText() == "":
-            if self.cmb_sceneNum.currentText().isnumeric():
-                if self.cmb_sceneNum.findText(self.cmb_sceneNum.currentText()) < 0:  # 新的一幕
-                    self.sceneNum.append(self.cmb_sceneNum.currentText())
-                    self.cmb_sceneNum.addItem(self.cmb_sceneNum.currentText())
-                    self.cmb_sceneNum.setCurrentIndex(self.cmb_sceneNum.count()-1)
-                    self.currentScene = self.cmb_sceneNum.currentText()
-                    self.cmb_sceneNum.model().sort(0)  # 排序
-            else:
-                self.msg_sceneNotNum.exec_()
+    # 儲存內容
+    def save(self):
+        self.saveSceneContent()
 
     # 檢查、更新角色選單
     def _checkCharacter(self):
@@ -316,6 +398,20 @@ class Tab3(QtWidgets.QWidget):
         for i in checkCharacter:
             self.cmb_character.addItem(i)
         self.character = checkCharacter  # 更新角色
+
+    # set table
+    def setTable(self, content):
+        if content.__len__() > 0:
+            for i in range(content.__len__()):
+                character = QtWidgets.QTableWidgetItem(content[i]['role'])
+                utterance = QtWidgets.QTableWidgetItem(content[i]['utterance'])
+                scenario = QtWidgets.QTableWidgetItem(content[i]['scenario'])
+                rowCount = self.tableWidget.rowCount()
+                self.tableWidget.insertRow(rowCount)
+                self.tableWidget.setItem(rowCount, 0, character)
+                self.tableWidget.setItem(rowCount, 1, utterance)
+                self.tableWidget.setItem(rowCount, 2, scenario)
+            self._checkCharacter()
 
     # 新增一列
     def _addRow(self):
