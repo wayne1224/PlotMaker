@@ -125,6 +125,7 @@ class Character(QtWidgets.QGroupBox):
         self.verticalLayout_4.addLayout(self.horizontalLayout_6)
         self.label_photo = QtWidgets.QLabel(self.verticalLayoutWidget_4)
         self.label_photo.setMaximumSize(QtCore.QSize(150, 200))
+        self.label_photo.setMinimumSize(QtCore.QSize(150, 200))
         self.label_photo.setAutoFillBackground(False)
         self.label_photo.setFrameShape(QtWidgets.QFrame.Box)
         self.label_photo.setText("")
@@ -177,11 +178,14 @@ class Character(QtWidgets.QGroupBox):
         self.input_Role.setText(char['name'])
         self.input_Actor.setText(char['actor'])
         self.input_Desc.setPlainText(char['description'])
-        self.photoID = char['photo']
-        photoBytes = db.findImg(char['photo'])
-        pixmap = QtGui.QPixmap()
-        pixmap.loadFromData(photoBytes)
-        self.label_photo.setPixmap(pixmap)
+        try:
+            self.photoID = char['photo']
+            photoBytes = db.findImg(char['photo'])
+            pixmap = QtGui.QPixmap()
+            pixmap.loadFromData(photoBytes)
+            self.label_photo.setPixmap(pixmap)
+        except:
+            self.photoID = None
     
     def selectPhoto(self):
         filePath, _ = QtWidgets.QFileDialog.getOpenFileName(None,  
@@ -370,15 +374,45 @@ class Tab2(QtWidgets.QWidget):
         self.actionLayout.addWidget(self.save_btn)
         self.verticalLayout_3.addLayout(self.actionLayout)
 
-        self.retranslateUi()
+        #劇照
+        self.photoLayout = QtWidgets.QVBoxLayout()
+        self.label_P = QtWidgets.QLabel()
+        self.label_P.setFont(font)
+        self.selectPhoto_btn = QtWidgets.QPushButton()
+        self.selectPhoto_btn.setFont(font)
+        self.PLayout = QtWidgets.QHBoxLayout()
+        self.PLayout.addWidget(self.label_P)
+        self.PLayout.addWidget(self.selectPhoto_btn)
+
+        self.label_photo = QtWidgets.QLabel()
+        self.label_photo.setMinimumSize(QtCore.QSize(180, 240))
+        self.label_photo.setMaximumSize(QtCore.QSize(180, 240))
+        self.label_photo.setAutoFillBackground(False)
+        self.label_photo.setFrameShape(QtWidgets.QFrame.Box)
+        self.label_photo.setText("")
+        self.label_photo.setPixmap(QtGui.QPixmap(""))
+        self.label_photo.setScaledContents(True)
+        self.label_photo.setObjectName("label_photo")
+
+        self.photoLayout.addLayout(self.PLayout)
+        self.photoLayout.addWidget(self.label_photo)
+        self.horizontalLayout_4.addLayout(self.photoLayout)
+
 
         #signals
         self.addRole_btn.clicked.connect(self._addCharacter)
         self.save_btn.clicked.connect(self.save)
         self.clear_btn.clicked.connect(self.clear)
+        self.selectPhoto_btn.clicked.connect(self.selectPhoto)
 
         #save object_id
         self._id = None
+        self.photoID = None
+        self.photoPath = None
+        self.cwd = os.getcwd() #目前檔案位置
+
+
+        self.retranslateUi()
 
     def _addCharacter(self):
         self.rolesLayout.addWidget(Character())
@@ -399,6 +433,13 @@ class Tab2(QtWidgets.QWidget):
         Basic['type'] = self.comboBox.getItems()
         Basic['characters'] = characters
 
+        if self.photoPath != None: #新圖片或換圖片
+            photoID =  db.insertImg(self.photoPath)
+            Basic['photo'] = photoID
+        
+        elif self.photoID != None: #原圖片
+            Basic['photo'] = self.photoID
+
         if self._id == None:
             Basic['createTime'] = dt.now().strftime("%Y/%m/%d %H:%M:%S")
 
@@ -417,23 +458,46 @@ class Tab2(QtWidgets.QWidget):
         #先清除
         self.clear()
         #匯入
+        self._id = doc['_id']
         self.input_name.setText(doc['plotName'])
         self.input_author.setText(doc['author'])
         self.textEdit.setPlainText(doc['outline'])
         self.comboBox.setCheckState(doc['type'])
+
+        #匯入照片
+        try:
+            self.photoID = doc['photo']
+            photoBytes = db.findImg(doc['photo'])
+            pixmap = QtGui.QPixmap()
+            pixmap.loadFromData(photoBytes)
+            self.label_photo.setPixmap(pixmap)
+        except:
+            self.photoID = None
+
         for i, char in enumerate(doc['characters']):
             if i > 2:
                 self._addCharacter()
             self.rolesLayout.itemAt(i).widget().setup(char)
+        
+
+    def selectPhoto(self):
+        filePath, _ = QtWidgets.QFileDialog.getOpenFileName(None,  
+                                    "開啟圖片",  
+                                    self.cwd, # 起始路径 
+                                    "Image Files(*.png *.jpg *.bmp)")
+        if filePath and os.path.exists(filePath):
+            self.label_photo.setPixmap(QtGui.QPixmap(filePath))
+            self.photoPath = filePath
 
     def clear(self):
         self.input_name.clear()
         self.input_author.clear()
         self.textEdit.clear()
         self.comboBox.clear()
+        self.label_photo.clear()
         for i in range(self.rolesLayout.count()):
             self.rolesLayout.itemAt(i).widget().clear()
-                
+    
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
         self.label.setText(_translate("", "劇名："))
@@ -441,9 +505,11 @@ class Tab2(QtWidgets.QWidget):
         self.label_3.setText(_translate("", "類型："))
         self.label_4.setText(_translate("", "概要："))
         self.label_5.setText(_translate("", "角色："))
+        self.label_P.setText(_translate("", "劇照："))
         self.addRole_btn.setText(_translate("", "新增角色"))
         self.clear_btn.setText(_translate("", "全部清除"))
         self.save_btn.setText(_translate("", "儲存"))
+        self.selectPhoto_btn.setText(_translate("","選擇照片"))
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
