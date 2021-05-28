@@ -410,14 +410,14 @@ class Tab2(QtWidgets.QWidget):
         self.photoID = None
         self.photoPath = None
         self.cwd = os.getcwd() #目前檔案位置
-
+        self.currentDoc = {'plotName': '', 'author': '', 'outline': '', 'type': [], 'characters': []} #檢查是否修改
 
         self.retranslateUi()
 
     def _addCharacter(self):
         self.rolesLayout.addWidget(Character())
        
-    def save(self):
+    def _getCurrentDoc(self):
         Basic = {}
         characters = []
 
@@ -436,22 +436,39 @@ class Tab2(QtWidgets.QWidget):
         if self.photoPath != None: #新圖片或換圖片
             photoID =  db.insertImg(self.photoPath)
             Basic['photo'] = photoID
-        
         elif self.photoID != None: #原圖片
             Basic['photo'] = self.photoID
+        
+        return Basic
+
+    def checkChanged(self):
+        if self._getCurrentDoc() != self.currentDoc:
+            return True
+        else:
+            return False
+
+    def save(self):
+        Basic = self._getCurrentDoc()
 
         if self._id == None:
             Basic['createTime'] = dt.now().strftime("%Y/%m/%d %H:%M:%S")
 
-        if db.upsertBasic(Basic):
+        if self._id != None:
+            response =  db.upsertBasic(Basic, self._id)
+        else:
+            response = db.upsertBasic(Basic)
+
+        if response:
             informBox = QtWidgets.QMessageBox.information(self, '通知','資料更新成功', QtWidgets.QMessageBox.Ok)
         else:
             informBox = QtWidgets.QMessageBox.information(self, '通知','資料儲存失敗', QtWidgets.QMessageBox.Ok)
 
-        if '_id' in Basic:
+        if self._id == None:
             self._id = Basic['_id']
 
-        print(Basic['_id'])
+        #存目前的進度
+        self.currentDoc = Basic
+        self.currentDoc.pop('createTime', None)
     
     @QtCore.pyqtSlot(dict)
     def import_Doc(self, doc):
@@ -478,6 +495,10 @@ class Tab2(QtWidgets.QWidget):
             if i > 2:
                 self._addCharacter()
             self.rolesLayout.itemAt(i).widget().setup(char)
+        
+        #存目前的進度
+        self.currentDoc = doc
+        self.currentDoc.pop('createTime', None)
         
 
     def selectPhoto(self):
@@ -517,3 +538,4 @@ if __name__ == "__main__":
     screen.show()
     sys.exit(app.exec_())
 
+#self.input_trans.setStyleSheet("border: 1px solid red;")
