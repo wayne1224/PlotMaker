@@ -118,6 +118,14 @@ class Tab1(QtWidgets.QWidget):
         self.tableWidget.setHorizontalHeaderItem(6, item)
         self.gridLayout.addWidget(self.tableWidget, 3, 0, 1, 1)
 
+        self.tableWidget.horizontalHeader().setSectionResizeMode(0, QtWidgets.QHeaderView.Stretch)
+        self.tableWidget.horizontalHeader().setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
+        self.tableWidget.horizontalHeader().setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
+        self.tableWidget.horizontalHeader().setSectionResizeMode(3, QtWidgets.QHeaderView.Stretch)
+        self.tableWidget.horizontalHeader().setSectionResizeMode(4, QtWidgets.QHeaderView.Stretch)
+        self.tableWidget.horizontalHeader().setSectionResizeMode(5, QtWidgets.QHeaderView.Stretch)
+        self.tableWidget.horizontalHeader().setSectionResizeMode(6, QtWidgets.QHeaderView.Stretch)
+
         self.retranslateUi()
         QtCore.QMetaObject.connectSlotsByName(self)
 
@@ -185,7 +193,7 @@ class Tab1(QtWidgets.QWidget):
                 self.tableWidget.setCellWidget(i,5,importBtn)
                 self.tableWidget.setCellWidget(i,6,deleteBtn)
                 importBtn.clicked.connect(partial(self.importDoc , doc))
-                print('success')
+                deleteBtn.clicked.connect(partial(self.deleteDoc , doc['_id'] , i))
         else :
             informBox = QtWidgets.QMessageBox.information(self, '查詢','查無資料', QtWidgets.QMessageBox.Ok)
 
@@ -194,11 +202,17 @@ class Tab1(QtWidgets.QWidget):
         self.procDoc.emit(obj)
         informBox = QtWidgets.QMessageBox.information(self, '通知','匯入完成', QtWidgets.QMessageBox.Ok)
 
-    def deleteDoc (self):
-        # delete = QtWidgets.QMessageBox.warning(self,
-        #                     "PlotMaker",
-        #                     '<p style="font-size:13pt; color: red;">確定要刪除此資料嗎?</p>',
-        #                     QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.Cancel)
+    def deleteDoc (self, objID , i):
+        delete = QtWidgets.QMessageBox.warning(self,
+                            "PlotMaker",
+                            '<p style="font-size:13pt; color: red;">確定要刪除此資料嗎?</p>',
+                            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.Cancel)
+        if delete == QtWidgets.QMessageBox.Yes:
+            if Database.DBapi.deleteDocs(objID):
+                self.tableWidget.removeRow(i)
+                informBox = QtWidgets.QMessageBox.information(self, '成功','成功刪除個案', QtWidgets.QMessageBox.Ok)
+            else:
+                informBox = QtWidgets.QMessageBox.critical(self, '失敗','刪除個案失敗', QtWidgets.QMessageBox.Ok)
         pass
 
 if __name__ == "__main__":
