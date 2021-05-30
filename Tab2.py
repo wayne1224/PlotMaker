@@ -505,6 +505,8 @@ class Tab2(QtWidgets.QWidget):
             Basic['photo'] = photoID
         elif self.photoID != None: #原圖片
             Basic['photo'] = self.photoID
+        else:
+            Basic['photo'] = None
         
         return Basic
 
