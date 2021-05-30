@@ -4,8 +4,11 @@ import time
 import calendar
 import gridfs
 import os
+<<<<<<< Updated upstream
 import io
 # import PIL.Image as Image
+=======
+>>>>>>> Stashed changes
 
 from bson.objectid import ObjectId
 
@@ -54,11 +57,11 @@ def deleteDocs(objID):
     try:
         Basic = db["Basic"]
         Content = db["Content"]
-        queryB = {"_id" : objID}
-        queryC = {"BasicID" : objID}
+        queryBasic = {"_id" : objID}
+        queryContent = {"BasicID" : objID}
 
-        Basic.delete_one(queryB)
-        Content.delete_one(queryC)
+        Basic.delete_one(queryBasic)
+        Content.delete_one(queryContent)
 
         return True
        
@@ -87,7 +90,7 @@ def upsertBasic(data , objID = None):  #  return True , False
                                                         "author" : data["author"] , 
                                                         "outline" : data["outline"] , 
                                                         "type" : data["type"],
-                                                        "characters" : data["characters"],
+                                                        "charaters" : data["charaters"],
                                                         }
                                                 }
             )
@@ -133,7 +136,7 @@ def findImg(objID):
 
         if grid.exists({"_id" : objID}):
             return grid.find_one({"_id" : objID}).read()
-            
+
     except pymongo.errors.PyMongoError as e:
         return False
 
@@ -158,7 +161,9 @@ connectDB()
 # print(upsertBasic(data))
 
 # print(insertImg(path))
-# img = findImg(objID)
-# print(io.BytesIO(img))
+img = findImg(objID)
+
+# import io
+# import PIL.Image as Image
 # img = Image.open(io.BytesIO(img))
 # img.show()
