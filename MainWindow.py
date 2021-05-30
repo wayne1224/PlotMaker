@@ -29,6 +29,10 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tab1.procDoc.connect(self.tab2.import_Doc)
         #self.tab1.procCont.connect(self.tab3.)
 
+        #查詢後清空所有頁面資料
+        #self.tab1.procFind.connect(self.tab2)
+        #self.tab1.procFind.connect(self.tab3)
+
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
     window = MainWindow()
