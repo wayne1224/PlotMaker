@@ -54,6 +54,12 @@ class CheckableComboBox(QtWidgets.QComboBox):
             item = self.model().item(idx, 0)
             item.setCheckState(QtCore.Qt.Checked)
 
+    def isEmpty(self):
+        for i in range(self.count()):
+            if self.item_checked(i):
+                return False
+        return True
+
     def clear(self):
         for i in range(self.count()):
             if self.item_checked(i):
@@ -195,7 +201,14 @@ class Character(QtWidgets.QGroupBox):
             self.label_photo.setPixmap(pixmap)
         except:
             self.photoID = None
-    
+
+        #清除CSS
+        self.input_Role.setStyleSheet("")
+        self.input_Actor.setStyleSheet("")
+
+    def getName(self):
+        return self.input_Role.text()
+
     def selectPhoto(self):
         filePath, _ = QtWidgets.QFileDialog.getOpenFileName(None,  
                                     "開啟圖片",  
@@ -227,6 +240,10 @@ class Character(QtWidgets.QGroupBox):
         if all(value == '' for value in profile.values()):
             return
 
+        #清除CSS
+        self.input_Role.setStyleSheet("")
+        self.input_Actor.setStyleSheet("")
+
         return profile
     
     def delete(self):
@@ -244,12 +261,27 @@ class Character(QtWidgets.QGroupBox):
             self.deleteLater()
 
         
+    def isEmpty(self):
+        check = False
+
+        if self.input_Role.text() == '' and self.input_Actor.text() != '':
+            self.input_Role.setStyleSheet("border: 1px solid red;")
+            check = True
+        if self.input_Role.text() != '' and self.input_Actor.text() == '':
+            self.input_Actor.setStyleSheet("border: 1px solid red;")
+            check = True
+
+        return check
+
     def clear(self):
         self.input_Role.clear()
         self.input_Actor.clear()
         self.input_Desc.clear()
         self.label_photo.clear()
 
+        #清除CSS
+        self.input_Role.setStyleSheet("")
+        self.input_Actor.setStyleSheet("")
     
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
@@ -260,6 +292,7 @@ class Character(QtWidgets.QGroupBox):
         self.delete_btn.setText(_translate("", "刪除角色"))
 
 class Tab2(QtWidgets.QWidget):
+    procCont = QtCore.pyqtSignal(dict)
     def __init__(self):
         super(Tab2, self).__init__()
         self.verticalLayoutWidget = QtWidgets.QWidget()
@@ -481,28 +514,48 @@ class Tab2(QtWidgets.QWidget):
         else:
             return False
 
+    def getCharacterNames(self):
+        characterNames = []
+        for i in range(self.rolesLayout.count()):
+            char = self.rolesLayout.itemAt(i).widget().save()
+            if char != None:
+                characterNames.append(char.getName())
+        return characterNames
+
     def save(self):
-        Basic = self._getCurrentDoc()
+        if self.isEmpty() == False:
+            Basic = self._getCurrentDoc()
 
-        if self._id == None:
-            Basic['createTime'] = dt.now().strftime("%Y/%m/%d %H:%M:%S")
+            if self._id == None:
+                Basic['createTime'] = dt.now().strftime("%Y/%m/%d %H:%M:%S")
 
-        if self._id != None:
-            response =  db.upsertBasic(Basic, self._id)
+            if self._id != None:
+                response =  db.upsertBasic(Basic, self._id)
+            else:
+                response = db.upsertBasic(Basic)
+
+            if response:
+                informBox = QtWidgets.QMessageBox.information(self, '通知','資料更新成功', QtWidgets.QMessageBox.Ok)
+            else:
+                informBox = QtWidgets.QMessageBox.information(self, '通知','資料儲存失敗', QtWidgets.QMessageBox.Ok)
+
+            if self._id == None:
+                self._id = Basic['_id']
+
+            #存目前的進度
+            self.currentDoc = Basic
+            self.currentDoc.pop('createTime', None)
+
+            #CSS改回來
+            self.input_name.setStyleSheet("")
+            self.input_author.setStyleSheet("")
+            self.comboBox.setStyleSheet("")
+
+            content = {'BasicID':Basic['_id'], 'plotName':Basic['plotName'], 'characters': self.getCharacterNames()}
+            self.procCont.emit(content)
+
         else:
-            response = db.upsertBasic(Basic)
-
-        if response:
-            informBox = QtWidgets.QMessageBox.information(self, '通知','資料更新成功', QtWidgets.QMessageBox.Ok)
-        else:
-            informBox = QtWidgets.QMessageBox.information(self, '通知','資料儲存失敗', QtWidgets.QMessageBox.Ok)
-
-        if self._id == None:
-            self._id = Basic['_id']
-
-        #存目前的進度
-        self.currentDoc = Basic
-        self.currentDoc.pop('createTime', None)
+            QtWidgets.QMessageBox.warning(self, '通知','紅框為必填項目', QtWidgets.QMessageBox.Ok)
     
     @QtCore.pyqtSlot(dict)
     def import_Doc(self, doc):
@@ -533,8 +586,12 @@ class Tab2(QtWidgets.QWidget):
         #存目前的進度
         self.currentDoc = doc
         self.currentDoc.pop('createTime', None)
-        
 
+        #CSS改回來
+        self.input_name.setStyleSheet("")
+        self.input_author.setStyleSheet("")
+        self.comboBox.setStyleSheet("")
+        
     def selectPhoto(self):
         filePath, _ = QtWidgets.QFileDialog.getOpenFileName(None,  
                                     "開啟圖片",  
@@ -557,7 +614,27 @@ class Tab2(QtWidgets.QWidget):
         self.label_photo.clear()
         for i in range(self.rolesLayout.count()):
             self.rolesLayout.itemAt(i).widget().clear()
+        
+        #CSS改回來
+        self.input_name.setStyleSheet("")
+        self.input_author.setStyleSheet("")
+        self.comboBox.setStyleSheet("")
     
+    def isEmpty(self):
+        check = False
+         
+        if self.input_name.text() == '':
+            self.input_name.setStyleSheet("border: 1px solid red;")
+            check = True
+        if self.input_author.text() == '':
+            self.input_author.setStyleSheet("border: 1px solid red;")
+            check = True
+        if self.comboBox.isEmpty() == True:
+            self.comboBox.setStyleSheet("border: 1px solid red;")
+            check = True
+        
+        return check
+        
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
         self.label.setText(_translate("", "劇名："))
@@ -575,5 +652,3 @@ if __name__ == "__main__":
     screen = Tab2()
     screen.show()
     sys.exit(app.exec_())
-
-#self.input_trans.setStyleSheet("border: 1px solid red;")

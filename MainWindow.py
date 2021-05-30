@@ -8,7 +8,7 @@ class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.resize(1393, 870)
-        self.setWindowTitle("CLSA")
+        self.setWindowTitle("PlotMaker")
         self.mainTab = QtWidgets.QTabWidget()
         self.setCentralWidget(self.mainTab)
 
@@ -28,6 +28,7 @@ class MainWindow(QtWidgets.QMainWindow):
         #Signals
         self.tab1.procDoc.connect(self.tab2.import_Doc)
         self.tab1.procCont.connect(self.tab3.importContent)
+        #self.tab2.procCont.connect(self.tab3.)
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
