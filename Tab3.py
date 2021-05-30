@@ -117,7 +117,6 @@ class Tab3(QtWidgets.QWidget):
         font = QtGui.QFont()
         font.setPointSize(12)
         self.cmb_character.setFont(font)
-        self.cmb_character.setEditable(True)
         self.cmb_character.setSizeAdjustPolicy(QtWidgets.QComboBox.AdjustToContents)
         self.cmb_character.setObjectName("cmb_character")
         self.cmb_character.addItem("")
@@ -163,6 +162,7 @@ class Tab3(QtWidgets.QWidget):
         self.horizontalLayout_5.addWidget(self.btn_add)
         layout.addLayout(self.horizontalLayout_5)
         self.tableWidget = QtWidgets.QTableWidget()
+        self.tableWidget.setEditTriggers(QtWidgets.QTableWidget.NoEditTriggers)
         font = QtGui.QFont()
         font.setPointSize(12)
         self.tableWidget.setFont(font)
@@ -213,7 +213,7 @@ class Tab3(QtWidgets.QWidget):
         self.input_utterance.returnPressed.connect(self._addRow)
         self.input_scenario.returnPressed.connect(self._addRow)
         self.btn_deleteRow.clicked.connect(self._deleteRow)
-        self.tableWidget.cellClicked.connect(self._checkCharacter)
+        #self.tableWidget.cellClicked.connect(self._checkCharacter)
 
         # 視窗
         # 輸入數字以外的幕數
@@ -226,10 +226,10 @@ class Tab3(QtWidgets.QWidget):
         self.msg_oneLeftSceneDelete.setWindowTitle("提示")
         self.msg_oneLeftSceneDelete.setText("只剩一幕不能刪除！")
         self.msg_oneLeftSceneDelete.setIcon(QtWidgets.QMessageBox.Information)
-        # 未輸入、選擇角色
+        # 未選擇角色
         self.msg_characterNotSelect = QtWidgets.QMessageBox()
         self.msg_characterNotSelect.setWindowTitle("提示")
-        self.msg_characterNotSelect.setText("請輸入、選擇角色！")
+        self.msg_characterNotSelect.setText("請選擇角色！")
         self.msg_characterNotSelect.setIcon(QtWidgets.QMessageBox.Information)
         # 未選取刪除列
         self.msg_deleteNotSelect = QtWidgets.QMessageBox()
@@ -237,6 +237,8 @@ class Tab3(QtWidgets.QWidget):
         self.msg_deleteNotSelect.setText("請選取至少一整列刪除！")
         self.msg_deleteNotSelect.setIcon(QtWidgets.QMessageBox.Information)
 
+        self.basicID = None  # BasicID
+        self.plotName = ""  # 劇名
         self.sceneNum = [1]  # 幕
         self.currentSceneNum = 1  # 目前所選的幕
         self.title = ""  # 標題
@@ -283,27 +285,46 @@ class Tab3(QtWidgets.QWidget):
         self.cmb_character.addItem("語境")
         self.tableWidget.setRowCount(0)
 
+    # Tab1查詢匯入
     @QtCore.pyqtSlot(dict)
-    def importContent(self, content):
+    def importSearchContent(self, content):
         self.clearInput()
         self.clearSceneInput()
+
         self.DBContent = content
+        self.basicID = self.DBContent["BasicID"]
+        self.plotName = self.DBContent["plotName"]
+        self.character = self.DBContent["characters"]
+        if self.character:  # 更新角色
+            for i in range(self.character.__len__()):
+                self.cmb_character.addItem(self.character[i])
+        
         if self.DBContent["scene"]:
             self.cmb_sceneNum.blockSignals(True)
             self.cmb_sceneNum.clear()
             for i in range(self.DBContent["scene"].__len__()):
                 self.sceneNum.append(self.DBContent["scene"][i]["num"])
                 self.cmb_sceneNum.addItem(self.DBContent["scene"][i]["num"].__str__())
+            self.cmb_sceneNum.blockSignals(False)
             self.currentSceneNum = self.DBContent["scene"][0]["num"]
             self.title = self.DBContent["scene"][0]["title"]
             self.outline = self.DBContent["scene"][0]["outline"]
             self.input_sceneTitle.setText(self.title)
             self.txt_sceneOutline.setText(self.outline)
-            self._checkCharacter()  # 更新角色
             self.currentContent = self.DBContent["scene"][0]["content"]
             self.setTable(self.currentContent)
             self.currentSceneContent = self.DBContent["scene"][0]
             self.allScenes = self.DBContent["scene"]
+
+    # Tab2儲存匯入
+    @QtCore.pyqtSlot(dict)
+    def getCont(self, content):
+        self.basicID = content["BasicID"]
+        self.plotName = content["plotName"]
+        self.character = content["characters"]
+        if self.character:
+            for i in range(self.character.__len__()):
+                self.cmb_character.addItem(self.character[i])
 
     # change scene
     def changeScene(self):
@@ -407,6 +428,7 @@ class Tab3(QtWidgets.QWidget):
         self.saveSceneContent()
         db.updateContent(self.DBContent["BasicID"], self.allScenes)
 
+    '''
     # 檢查、更新角色選單
     def _checkCharacter(self):
         checkCharacter = []
@@ -422,6 +444,7 @@ class Tab3(QtWidgets.QWidget):
         for i in checkCharacter:
             self.cmb_character.addItem(i)
         self.character = checkCharacter  # 更新角色
+    '''
 
     # set table
     def setTable(self, content):
@@ -435,7 +458,7 @@ class Tab3(QtWidgets.QWidget):
                 self.tableWidget.setItem(rowCount, 0, character)
                 self.tableWidget.setItem(rowCount, 1, utterance)
                 self.tableWidget.setItem(rowCount, 2, scenario)
-            self._checkCharacter()
+            #self._checkCharacter()
 
     # 新增一列
     def _addRow(self):
@@ -469,7 +492,7 @@ class Tab3(QtWidgets.QWidget):
         if indexes:
             for index in sorted(indexes, reverse=True):
                 self.tableWidget.removeRow(index.row())
-            self._checkCharacter()
+            #self._checkCharacter()
         else:  # 未選取刪除列
             self.msg_deleteNotSelect.exec_()
 

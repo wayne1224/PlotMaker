@@ -75,8 +75,8 @@ def findContent(objID):
 
 # Tab2 api
 def upsertBasic(data , objID = None):
-    Basic = db["Basic"] # choose collection
-
+    Basic = db["Basic"]
+    Content = db["Content"] 
     #update
     if objID:
         try:
@@ -90,14 +90,19 @@ def upsertBasic(data , objID = None):
                                                         }
                                                 }
             )
+            
+            name = list()
+
+            for i in data["characters"]:
+                name.append(i["name"])
+
+            Content.update_one({"BasicID" : objID} , {"$set" : {"plotName" : data["plotName"] , "characters" : name}})
 
             return True
         except pymongo.errors.PyMongoError as e:
             return False
     # insert
-    else:
-        Content = db["Content"]
-      
+    else:     
         try:
             BasicID = Basic.insert_one(data).inserted_id
             Content.insert_one({"BasicID" : BasicID , "plotName" : None , "characters" : None , "scene" : None})
