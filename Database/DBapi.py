@@ -74,7 +74,7 @@ def findContent(objID):
         return False
 
 # Tab2 api
-def upsertBasic(data , objID = None):  #  return True , False
+def upsertBasic(data , objID = None):
     Basic = db["Basic"] # choose collection
 
     #update
@@ -85,7 +85,7 @@ def upsertBasic(data , objID = None):  #  return True , False
                                                         "author" : data["author"] , 
                                                         "outline" : data["outline"] , 
                                                         "type" : data["type"],
-                                                        "charaters" : data["charaters"],
+                                                        "characters" : data["characters"],
                                                         }
                                                 }
             )
