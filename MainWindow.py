@@ -1,8 +1,24 @@
 import sys
+import Database.DBapi as db
 from PyQt5 import QtCore, QtGui, QtWidgets
+from functools import partial
 from Tab1 import Tab1
 from Tab2 import Tab2
 from Tab3 import Tab3
+
+class Worker(QtCore.QObject):
+    finished = QtCore.pyqtSignal()
+    progress = QtCore.pyqtSignal(int)
+
+    def __init__(self, fn):
+        super(Worker, self).__init__()
+        self.func = fn
+
+    def run(self):
+        if not self.func():
+            print("Database Failed")
+            sys.exit()
+        self.finished.emit()
 
 class MainWindow(QtWidgets.QMainWindow):
     def __init__(self):
@@ -11,6 +27,16 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowTitle("PlotMaker")
         self.mainTab = QtWidgets.QTabWidget()
         self.setCentralWidget(self.mainTab)
+
+        #資料庫連接失敗 直接關閉程式
+        self.thread = QtCore.QThread()
+        self.worker = Worker(db.connectDB)
+        self.worker.moveToThread(self.thread)
+        self.thread.started.connect(self.worker.run)
+        self.worker.finished.connect(self.thread.quit)
+        self.worker.finished.connect(self.worker.deleteLater)
+        self.thread.finished.connect(self.thread.deleteLater)
+        self.thread.start()
 
         #創建3個tab
         self.tab1 = Tab1()
@@ -33,6 +59,9 @@ class MainWindow(QtWidgets.QMainWindow):
         #查詢後清空所有頁面資料
         #self.tab1.procFind.connect(self.tab2)
         #self.tab1.procFind.connect(self.tab3)
+
+        #跳頁
+        self.tab1.procMain.connect(partial(self.mainTab.setCurrentIndex, 1))
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)
