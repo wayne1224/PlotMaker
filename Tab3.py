@@ -272,7 +272,6 @@ class Tab3(QtWidgets.QWidget):
         self.title = ""  # 標題
         self.outline = ""  # 劇情內容
         self.character = []  # 角色
-        self.currentContent = []  # 目前幕的角色台詞
         self.currentSceneContent = {}  # 目前幕的所有內容
         self.allScenes = []  # 全部幕的內容
         self.DBContent = {}  # 匯入的資料
@@ -355,6 +354,9 @@ class Tab3(QtWidgets.QWidget):
         self.plotName = content["plotName"]
         self.lbl_impPlotName.setText(self.plotName)
         self.character = content["characters"]
+        self.cmb_character.clear()
+        self.cmb_character.addItem("")
+        self.cmb_character.addItem("語境")
         if self.character:
             for i in range(self.character.__len__()):
                 self.cmb_character.addItem(self.character[i])
