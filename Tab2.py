@@ -517,7 +517,7 @@ class Tab2(QtWidgets.QWidget):
     def getCharacterNames(self):
         characterNames = []
         for i in range(self.rolesLayout.count()):
-            char = self.rolesLayout.itemAt(i).widget().save()
+            char = self.rolesLayout.itemAt(i).widget()
             if char != None:
                 characterNames.append(char.getName())
         return characterNames
@@ -632,6 +632,7 @@ class Tab2(QtWidgets.QWidget):
         if self.comboBox.isEmpty() == True:
             self.comboBox.setStyleSheet("border: 1px solid red;")
             check = True
+        
         
         return check
         
