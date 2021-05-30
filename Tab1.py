@@ -20,6 +20,8 @@ class Tab1(QtWidgets.QWidget):
     procDoc = QtCore.pyqtSignal(dict)
     procCont = QtCore.pyqtSignal(dict)
     procFind = QtCore.pyqtSignal()
+    procMain = QtCore.pyqtSignal()
+
     def __init__(self):
         super(Tab1, self).__init__()
         font = QtGui.QFont()
@@ -214,6 +216,7 @@ class Tab1(QtWidgets.QWidget):
         self.procDoc.emit(obj)
         self.procCont.emit(content)
         informBox = QtWidgets.QMessageBox.information(self, '通知','匯入完成', QtWidgets.QMessageBox.Ok)
+        self.procMain.emit()
 
     def deleteDoc (self, objID , i):
         delete = QtWidgets.QMessageBox.warning(self,
