@@ -19,6 +19,7 @@ from functools import partial
 class Tab1(QtWidgets.QWidget):
     procDoc = QtCore.pyqtSignal(dict)
     procCont = QtCore.pyqtSignal(dict)
+    procFind = QtCore.pyqtSignal()
     def __init__(self):
         super(Tab1, self).__init__()
         font = QtGui.QFont()
@@ -98,10 +99,16 @@ class Tab1(QtWidgets.QWidget):
         self.gridLayout.addLayout(self.horizontalLayout_4, 1, 0, 1, 1)
         spacerItem1 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Preferred)
         self.gridLayout.addItem(spacerItem1, 2, 0, 1, 1)
+
+        self.horizontalLayout_4.setContentsMargins(20, 20, 30, 0)
+        self.gridLayout.setContentsMargins(20, 0, 20, 0)
+
         self.tableWidget = QtWidgets.QTableWidget()
         self.tableWidget.setObjectName("tableWidget")
         self.tableWidget.setColumnCount(7)
         self.tableWidget.setRowCount(0)
+        
+
         item = QtWidgets.QTableWidgetItem()
         self.tableWidget.setHorizontalHeaderItem(0, item)
         item = QtWidgets.QTableWidgetItem()
@@ -122,9 +129,11 @@ class Tab1(QtWidgets.QWidget):
         self.tableWidget.horizontalHeader().setSectionResizeMode(1, QtWidgets.QHeaderView.Stretch)
         self.tableWidget.horizontalHeader().setSectionResizeMode(2, QtWidgets.QHeaderView.Stretch)
         self.tableWidget.horizontalHeader().setSectionResizeMode(3, QtWidgets.QHeaderView.Stretch)
-        self.tableWidget.horizontalHeader().setSectionResizeMode(4, QtWidgets.QHeaderView.Stretch)
-        self.tableWidget.horizontalHeader().setSectionResizeMode(5, QtWidgets.QHeaderView.Stretch)
-        self.tableWidget.horizontalHeader().setSectionResizeMode(6, QtWidgets.QHeaderView.Stretch)
+        self.tableWidget.horizontalHeader().setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeToContents)
+        self.tableWidget.horizontalHeader().setSectionResizeMode(5, QtWidgets.QHeaderView.ResizeToContents)
+        self.tableWidget.horizontalHeader().setSectionResizeMode(6, QtWidgets.QHeaderView.ResizeToContents)
+
+        self.tableWidget.setContentsMargins(20, 0, 20, 0)
 
         self.retranslateUi()
         QtCore.QMetaObject.connectSlotsByName(self)
@@ -148,6 +157,7 @@ class Tab1(QtWidgets.QWidget):
         item.setText(_translate("self", "建立時間"))
 
     def search(self) :
+        self.procFind.emit()
         Docs = Database.DBapi.findDocs(self.input_SLP.text(), self.input_caseID.text(), self.input_actor.text())
         
         #再翻新的話要清除舊的
@@ -194,7 +204,6 @@ class Tab1(QtWidgets.QWidget):
                 self.tableWidget.setCellWidget(i,6,deleteBtn)
 
                 content = Database.DBapi.findContent(doc['_id'])
-                print(content)
                 importBtn.clicked.connect(partial(self.importDoc , doc, content))
                 deleteBtn.clicked.connect(partial(self.deleteDoc , doc['_id'] , i))
         else :
