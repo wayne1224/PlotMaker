@@ -18,7 +18,7 @@ from functools import partial
 
 class Tab1(QtWidgets.QWidget):
     procDoc = QtCore.pyqtSignal(dict)
-
+    procCont = QtCore.pyqtSignal(dict)
     def __init__(self):
         super(Tab1, self).__init__()
         font = QtGui.QFont()
@@ -192,14 +192,18 @@ class Tab1(QtWidgets.QWidget):
                 deleteBtn = QtWidgets.QPushButton('刪除')
                 self.tableWidget.setCellWidget(i,5,importBtn)
                 self.tableWidget.setCellWidget(i,6,deleteBtn)
-                importBtn.clicked.connect(partial(self.importDoc , doc))
+
+                content = Database.DBapi.findContent(doc['_id'])
+                print(content)
+                importBtn.clicked.connect(partial(self.importDoc , doc, content))
                 deleteBtn.clicked.connect(partial(self.deleteDoc , doc['_id'] , i))
         else :
             informBox = QtWidgets.QMessageBox.information(self, '查詢','查無資料', QtWidgets.QMessageBox.Ok)
 
     @QtCore.pyqtSlot()
-    def importDoc (self, obj):
+    def importDoc (self, obj, content):
         self.procDoc.emit(obj)
+        self.procCont.emit(content)
         informBox = QtWidgets.QMessageBox.information(self, '通知','匯入完成', QtWidgets.QMessageBox.Ok)
 
     def deleteDoc (self, objID , i):
