@@ -505,6 +505,8 @@ class Tab2(QtWidgets.QWidget):
             Basic['photo'] = photoID
         elif self.photoID != None: #原圖片
             Basic['photo'] = self.photoID
+        else:
+            Basic['photo'] = None
         
         return Basic
 
@@ -517,7 +519,7 @@ class Tab2(QtWidgets.QWidget):
     def getCharacterNames(self):
         characterNames = []
         for i in range(self.rolesLayout.count()):
-            char = self.rolesLayout.itemAt(i).widget().save()
+            char = self.rolesLayout.itemAt(i).widget()
             if char != None:
                 characterNames.append(char.getName())
         return characterNames
@@ -530,14 +532,15 @@ class Tab2(QtWidgets.QWidget):
                 Basic['createTime'] = dt.now().strftime("%Y/%m/%d %H:%M:%S")
 
             if self._id != None:
-                response =  db.upsertBasic(Basic, self._id)
+                if db.upsertBasic(Basic, self._id):
+                    QtWidgets.QMessageBox.information(self, '通知','資料更新成功', QtWidgets.QMessageBox.Ok)
+                else:
+                    QtWidgets.QMessageBox.information(self, '通知','資料更新失敗', QtWidgets.QMessageBox.Ok)
             else:
-                response = db.upsertBasic(Basic)
-
-            if response:
-                informBox = QtWidgets.QMessageBox.information(self, '通知','資料更新成功', QtWidgets.QMessageBox.Ok)
-            else:
-                informBox = QtWidgets.QMessageBox.information(self, '通知','資料儲存失敗', QtWidgets.QMessageBox.Ok)
+                if db.upsertBasic(Basic):
+                    QtWidgets.QMessageBox.information(self, '通知','資料新增成功', QtWidgets.QMessageBox.Ok)
+                else:
+                    QtWidgets.QMessageBox.information(self, '通知','資料新增失敗', QtWidgets.QMessageBox.Ok)
 
             if self._id == None:
                 self._id = Basic['_id']
@@ -551,7 +554,7 @@ class Tab2(QtWidgets.QWidget):
             self.input_author.setStyleSheet("")
             self.comboBox.setStyleSheet("")
 
-            content = {'BasicID':Basic['_id'], 'plotName':Basic['plotName'], 'characters': self.getCharacterNames()}
+            content = {'BasicID': self._id, 'plotName':Basic['plotName'], 'characters': self.getCharacterNames()}
             self.procCont.emit(content)
 
         else:
@@ -632,7 +635,11 @@ class Tab2(QtWidgets.QWidget):
         if self.comboBox.isEmpty() == True:
             self.comboBox.setStyleSheet("border: 1px solid red;")
             check = True
-        
+
+        for i in range(self.rolesLayout.count()):
+            if self.rolesLayout.itemAt(i).widget().isEmpty():
+                check = True
+
         return check
         
     def retranslateUi(self):
