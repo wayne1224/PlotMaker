@@ -530,19 +530,15 @@ class Tab2(QtWidgets.QWidget):
                 Basic['createTime'] = dt.now().strftime("%Y/%m/%d %H:%M:%S")
 
             if self._id != None:
-                response =  db.upsertBasic(Basic, self._id)
-                if response:
+                if db.upsertBasic(Basic, self._id):
                     QtWidgets.QMessageBox.information(self, '通知','資料更新成功', QtWidgets.QMessageBox.Ok)
                 else:
                     QtWidgets.QMessageBox.information(self, '通知','資料更新失敗', QtWidgets.QMessageBox.Ok)
             else:
-                response = db.upsertBasic(Basic)
-                if response:
+                if db.upsertBasic(Basic):
                     QtWidgets.QMessageBox.information(self, '通知','資料新增成功', QtWidgets.QMessageBox.Ok)
                 else:
                     QtWidgets.QMessageBox.information(self, '通知','資料新增失敗', QtWidgets.QMessageBox.Ok)
-
-           
 
             if self._id == None:
                 self._id = Basic['_id']
