@@ -87,7 +87,7 @@ def upsertBasic(data , objID = None):  #  return True , False
                                                         "author" : data["author"] , 
                                                         "outline" : data["outline"] , 
                                                         "type" : data["type"],
-                                                        "charaters" : data["charaters"],
+                                                        "characters" : data["characters"],
                                                         }
                                                 }
             )

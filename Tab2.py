@@ -2,6 +2,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 import Database.DBapi as db
 import sys
 import os
+import qtawesome as qta
 from datetime import datetime as dt
 
 class CheckableComboBox(QtWidgets.QComboBox):
@@ -115,13 +116,19 @@ class Character(QtWidgets.QGroupBox):
         self.horizontalLayout_6.setObjectName("horizontalLayout_6")
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Minimum)
         self.horizontalLayout_6.addItem(spacerItem)
-        self.photo_btn = QtWidgets.QPushButton(self.verticalLayoutWidget_4)
+        icon = qta.icon('fa5.folder-open')
+        self.photo_btn = QtWidgets.QPushButton()
+        self.photo_btn.setIcon(icon)
         font = QtGui.QFont()
         font.setFamily("Arial")
         font.setPointSize(12)
         self.photo_btn.setFont(font)
         self.photo_btn.setObjectName("photo_btn")
+        icon = qta.icon('fa5s.trash')
+        self.deletePhoto_btn = QtWidgets.QPushButton()
+        self.deletePhoto_btn.setIcon(icon)
         self.horizontalLayout_6.addWidget(self.photo_btn)
+        self.horizontalLayout_6.addWidget(self.deletePhoto_btn)
         self.verticalLayout_4.addLayout(self.horizontalLayout_6)
         self.label_photo = QtWidgets.QLabel(self.verticalLayoutWidget_4)
         self.label_photo.setMaximumSize(QtCore.QSize(150, 200))
@@ -150,6 +157,7 @@ class Character(QtWidgets.QGroupBox):
         self.verticalLayout_3.addWidget(self.label_3)
         self.input_Desc = QtWidgets.QTextEdit(self.verticalLayoutWidget_4)
         self.input_Desc.setObjectName("input_Desc")
+        self.input_Desc.setFont(font)
         self.verticalLayout_3.addWidget(self.input_Desc)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
@@ -170,7 +178,8 @@ class Character(QtWidgets.QGroupBox):
 
         #signals
         self.photo_btn.clicked.connect(self.selectPhoto)
-        self.delete_btn.clicked.connect(self.deleteLater)
+        self.delete_btn.clicked.connect(self.delete)
+        self.deletePhoto_btn.clicked.connect(self.deletePhoto)
         self.photoPath = None
         self.photoID = None
     
@@ -196,6 +205,11 @@ class Character(QtWidgets.QGroupBox):
             self.label_photo.setPixmap(QtGui.QPixmap(filePath))
             self.photoPath = filePath
 
+    def deletePhoto(self):
+        self.label_photo.clear()
+        self.photoPath = None
+        self.photoID = None
+
     def save(self):
         profile = {}
         
@@ -215,6 +229,21 @@ class Character(QtWidgets.QGroupBox):
 
         return profile
     
+    def delete(self):
+        if (self.input_Role.text() != '' or self.input_Actor.text() != '' or self.input_Desc.toPlainText() != ''
+            or self.photoPath != None or self.photoID != None):
+            close = QtWidgets.QMessageBox.warning(self,
+                            "CLSA",
+                            '<p style="font-size:13pt; color: #3778bf;">確定要刪除角色嗎?</p>',
+                            QtWidgets.QMessageBox.Yes | QtWidgets.QMessageBox.No)
+            if close == QtWidgets.QMessageBox.Yes:
+                self.deleteLater()
+            elif close == QtWidgets.QMessageBox.No:
+                return
+        else:
+            self.deleteLater()
+
+        
     def clear(self):
         self.input_Role.clear()
         self.input_Actor.clear()
@@ -226,7 +255,7 @@ class Character(QtWidgets.QGroupBox):
         _translate = QtCore.QCoreApplication.translate
         self.label.setText(_translate("", "角色名稱："))
         self.label_2.setText(_translate("", "演員："))
-        self.photo_btn.setText(_translate("", "選擇相片"))
+        # self.photo_btn.setText(_translate("", "選擇相片"))
         self.label_3.setText(_translate("", "描述："))
         self.delete_btn.setText(_translate("", "刪除角色"))
 
@@ -378,18 +407,22 @@ class Tab2(QtWidgets.QWidget):
         self.photoLayout = QtWidgets.QVBoxLayout()
         self.label_P = QtWidgets.QLabel()
         self.label_P.setFont(font)
+        icon = qta.icon('fa5.folder-open')
         self.selectPhoto_btn = QtWidgets.QPushButton()
-        self.selectPhoto_btn.setFont(font)
+        self.selectPhoto_btn.setIcon(icon)
+        icon = qta.icon('fa5s.trash')
+        self.deletePhoto_btn = QtWidgets.QPushButton()
+        self.deletePhoto_btn.setIcon(icon)
         self.PLayout = QtWidgets.QHBoxLayout()
         self.PLayout.addWidget(self.label_P)
         self.PLayout.addWidget(self.selectPhoto_btn)
+        self.PLayout.addWidget(self.deletePhoto_btn)
 
         self.label_photo = QtWidgets.QLabel()
         self.label_photo.setMinimumSize(QtCore.QSize(180, 240))
         self.label_photo.setMaximumSize(QtCore.QSize(180, 240))
         self.label_photo.setAutoFillBackground(False)
         self.label_photo.setFrameShape(QtWidgets.QFrame.Box)
-        self.label_photo.setText("")
         self.label_photo.setPixmap(QtGui.QPixmap(""))
         self.label_photo.setScaledContents(True)
         self.label_photo.setObjectName("label_photo")
@@ -404,20 +437,21 @@ class Tab2(QtWidgets.QWidget):
         self.save_btn.clicked.connect(self.save)
         self.clear_btn.clicked.connect(self.clear)
         self.selectPhoto_btn.clicked.connect(self.selectPhoto)
+        self.deletePhoto_btn.clicked.connect(self.deletePhoto)
 
         #save object_id
         self._id = None
         self.photoID = None
         self.photoPath = None
         self.cwd = os.getcwd() #目前檔案位置
-
+        self.currentDoc = {'plotName': '', 'author': '', 'outline': '', 'type': [], 'characters': []} #檢查是否修改
 
         self.retranslateUi()
 
     def _addCharacter(self):
         self.rolesLayout.addWidget(Character())
        
-    def save(self):
+    def _getCurrentDoc(self):
         Basic = {}
         characters = []
 
@@ -436,22 +470,39 @@ class Tab2(QtWidgets.QWidget):
         if self.photoPath != None: #新圖片或換圖片
             photoID =  db.insertImg(self.photoPath)
             Basic['photo'] = photoID
-        
         elif self.photoID != None: #原圖片
             Basic['photo'] = self.photoID
+        
+        return Basic
+
+    def checkChanged(self):
+        if self._getCurrentDoc() != self.currentDoc:
+            return True
+        else:
+            return False
+
+    def save(self):
+        Basic = self._getCurrentDoc()
 
         if self._id == None:
             Basic['createTime'] = dt.now().strftime("%Y/%m/%d %H:%M:%S")
 
-        if db.upsertBasic(Basic):
+        if self._id != None:
+            response =  db.upsertBasic(Basic, self._id)
+        else:
+            response = db.upsertBasic(Basic)
+
+        if response:
             informBox = QtWidgets.QMessageBox.information(self, '通知','資料更新成功', QtWidgets.QMessageBox.Ok)
         else:
             informBox = QtWidgets.QMessageBox.information(self, '通知','資料儲存失敗', QtWidgets.QMessageBox.Ok)
 
-        if '_id' in Basic:
+        if self._id == None:
             self._id = Basic['_id']
 
-        print(Basic['_id'])
+        #存目前的進度
+        self.currentDoc = Basic
+        self.currentDoc.pop('createTime', None)
     
     @QtCore.pyqtSlot(dict)
     def import_Doc(self, doc):
@@ -479,6 +530,10 @@ class Tab2(QtWidgets.QWidget):
                 self._addCharacter()
             self.rolesLayout.itemAt(i).widget().setup(char)
         
+        #存目前的進度
+        self.currentDoc = doc
+        self.currentDoc.pop('createTime', None)
+        
 
     def selectPhoto(self):
         filePath, _ = QtWidgets.QFileDialog.getOpenFileName(None,  
@@ -488,6 +543,11 @@ class Tab2(QtWidgets.QWidget):
         if filePath and os.path.exists(filePath):
             self.label_photo.setPixmap(QtGui.QPixmap(filePath))
             self.photoPath = filePath
+
+    def deletePhoto(self):
+        self.label_photo.clear()
+        self.photoPath = None
+        self.photoID = None
 
     def clear(self):
         self.input_name.clear()
@@ -509,7 +569,6 @@ class Tab2(QtWidgets.QWidget):
         self.addRole_btn.setText(_translate("", "新增角色"))
         self.clear_btn.setText(_translate("", "全部清除"))
         self.save_btn.setText(_translate("", "儲存"))
-        self.selectPhoto_btn.setText(_translate("","選擇照片"))
 
 if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
@@ -517,3 +576,4 @@ if __name__ == "__main__":
     screen.show()
     sys.exit(app.exec_())
 
+#self.input_trans.setStyleSheet("border: 1px solid red;")
