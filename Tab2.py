@@ -531,13 +531,18 @@ class Tab2(QtWidgets.QWidget):
 
             if self._id != None:
                 response =  db.upsertBasic(Basic, self._id)
+                if response:
+                    QtWidgets.QMessageBox.information(self, '通知','資料新增成功', QtWidgets.QMessageBox.Ok)
+                else:
+                    QtWidgets.QMessageBox.information(self, '通知','資料新增失敗', QtWidgets.QMessageBox.Ok)
             else:
                 response = db.upsertBasic(Basic)
+                if response:
+                    QtWidgets.QMessageBox.information(self, '通知','資料更新成功', QtWidgets.QMessageBox.Ok)
+                else:
+                    QtWidgets.QMessageBox.information(self, '通知','資料更新失敗', QtWidgets.QMessageBox.Ok)
 
-            if response:
-                informBox = QtWidgets.QMessageBox.information(self, '通知','資料更新成功', QtWidgets.QMessageBox.Ok)
-            else:
-                informBox = QtWidgets.QMessageBox.information(self, '通知','資料儲存失敗', QtWidgets.QMessageBox.Ok)
+           
 
             if self._id == None:
                 self._id = Basic['_id']
@@ -551,7 +556,7 @@ class Tab2(QtWidgets.QWidget):
             self.input_author.setStyleSheet("")
             self.comboBox.setStyleSheet("")
 
-            content = {'BasicID':Basic['_id'], 'plotName':Basic['plotName'], 'characters': self.getCharacterNames()}
+            content = {'BasicID': self._id, 'plotName':Basic['plotName'], 'characters': self.getCharacterNames()}
             self.procCont.emit(content)
 
         else:
