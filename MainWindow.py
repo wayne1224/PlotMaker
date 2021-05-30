@@ -53,8 +53,8 @@ class MainWindow(QtWidgets.QMainWindow):
 
         #Signals
         self.tab1.procDoc.connect(self.tab2.import_Doc)
-        self.tab1.procCont.connect(self.tab3.importContent)
-        #self.tab2.procCont.connect(self.tab3.)
+        self.tab1.procCont.connect(self.tab3.importSearchContent)
+        self.tab2.procCont.connect(self.tab3.getCont)
 
         #查詢後清空所有頁面資料
         #self.tab1.procFind.connect(self.tab2)
