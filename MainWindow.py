@@ -27,6 +27,7 @@ class MainWindow(QtWidgets.QMainWindow):
 
         #Signals
         self.tab1.procDoc.connect(self.tab2.import_Doc)
+        #self.tab1.procCont.connect(self.tab3.)
 
 if __name__ == '__main__':
     app = QtWidgets.QApplication(sys.argv)

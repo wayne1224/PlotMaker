@@ -5,7 +5,7 @@ import calendar
 import gridfs
 import os
 import io
-import PIL.Image as Image
+# import PIL.Image as Image
 
 from bson.objectid import ObjectId
 
