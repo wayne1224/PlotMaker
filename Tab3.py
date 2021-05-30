@@ -12,6 +12,18 @@ class Tab3(QtWidgets.QWidget):
         self.setLayout(layout)
         self.horizontalLayout = QtWidgets.QHBoxLayout()
         self.horizontalLayout.setObjectName("horizontalLayout")
+        self.lbl_plotName = QtWidgets.QLabel()
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.lbl_plotName.setFont(font)
+        self.lbl_plotName.setObjectName("lbl_plotName")
+        self.horizontalLayout.addWidget(self.lbl_plotName)
+        self.lbl_impPlotName = QtWidgets.QLabel()
+        font = QtGui.QFont()
+        font.setPointSize(12)
+        self.lbl_impPlotName.setFont(font)
+        self.lbl_impPlotName.setObjectName("lbl_impPlotName")
+        self.horizontalLayout.addWidget(self.lbl_impPlotName)
         self.lbl_di = QtWidgets.QLabel()
         font = QtGui.QFont()
         font.setPointSize(12)
@@ -256,6 +268,7 @@ class Tab3(QtWidgets.QWidget):
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
+        self.lbl_plotName.setText(_translate("", "劇名："))
         self.lbl_di.setText(_translate("", "第"))
         self.cmb_sceneNum.setItemText(0, _translate("", "1"))
         self.lbl_mu.setText(_translate("", "幕"))
@@ -299,6 +312,7 @@ class Tab3(QtWidgets.QWidget):
         self.DBContent = content
         self.basicID = self.DBContent["BasicID"]
         self.plotName = self.DBContent["plotName"]
+        self.lbl_impPlotName.setText(self.plotName)
         self.character = self.DBContent["characters"]
         if self.character:  # 更新角色
             for i in range(self.character.__len__()):
@@ -326,6 +340,7 @@ class Tab3(QtWidgets.QWidget):
     def getCont(self, content):
         self.basicID = content["BasicID"]
         self.plotName = content["plotName"]
+        self.lbl_impPlotName.setText(self.plotName)
         self.character = content["characters"]
         if self.character:
             for i in range(self.character.__len__()):
