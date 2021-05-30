@@ -532,15 +532,15 @@ class Tab2(QtWidgets.QWidget):
             if self._id != None:
                 response =  db.upsertBasic(Basic, self._id)
                 if response:
-                    QtWidgets.QMessageBox.information(self, '通知','資料新增成功', QtWidgets.QMessageBox.Ok)
-                else:
-                    QtWidgets.QMessageBox.information(self, '通知','資料新增失敗', QtWidgets.QMessageBox.Ok)
-            else:
-                response = db.upsertBasic(Basic)
-                if response:
                     QtWidgets.QMessageBox.information(self, '通知','資料更新成功', QtWidgets.QMessageBox.Ok)
                 else:
                     QtWidgets.QMessageBox.information(self, '通知','資料更新失敗', QtWidgets.QMessageBox.Ok)
+            else:
+                response = db.upsertBasic(Basic)
+                if response:
+                    QtWidgets.QMessageBox.information(self, '通知','資料新增成功', QtWidgets.QMessageBox.Ok)
+                else:
+                    QtWidgets.QMessageBox.information(self, '通知','資料新增失敗', QtWidgets.QMessageBox.Ok)
 
            
 
@@ -637,8 +637,11 @@ class Tab2(QtWidgets.QWidget):
         if self.comboBox.isEmpty() == True:
             self.comboBox.setStyleSheet("border: 1px solid red;")
             check = True
-        
-        
+
+        for i in range(self.rolesLayout.count()):
+            if self.rolesLayout.itemAt(i).widget().isEmpty():
+                check = True
+
         return check
         
     def retranslateUi(self):
