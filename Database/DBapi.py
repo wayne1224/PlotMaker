@@ -85,6 +85,7 @@ def upsertBasic(data , objID = None):
                                                         "author" : data["author"] , 
                                                         "outline" : data["outline"] , 
                                                         "type" : data["type"],
+                                                        "photo" : data["photo"],
                                                         "characters" : data["characters"],
                                                         }
                                                 }
@@ -99,7 +100,7 @@ def upsertBasic(data , objID = None):
       
         try:
             BasicID = Basic.insert_one(data).inserted_id
-            Content.insert_one({"BasicID" : BasicID , "plotName" : None , "scene" : None})
+            Content.insert_one({"BasicID" : BasicID , "plotName" : None , "characters" : None , "scene" : None})
             return True
         except pymongo.errors.PyMongoError as e:
             return False   
