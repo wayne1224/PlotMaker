@@ -289,8 +289,21 @@ class Tab3(QtWidgets.QWidget):
         self.clearSceneInput()
         self.DBContent = content
         if self.DBContent["scene"]:
+            self.cmb_sceneNum.blockSignals(True)
+            self.cmb_sceneNum.clear()
             for i in range(self.DBContent["scene"].__len__()):
-                print("y")
+                self.sceneNum.append(self.DBContent["scene"][i]["num"])
+                self.cmb_sceneNum.addItem(self.DBContent["scene"][i]["num"].__str__())
+            self.currentSceneNum = self.DBContent["scene"][0]["num"]
+            self.title = self.DBContent["scene"][0]["title"]
+            self.outline = self.DBContent["scene"][0]["outline"]
+            self.input_sceneTitle.setText(self.title)
+            self.txt_sceneOutline.setText(self.outline)
+            self._checkCharacter()  # 更新角色
+            self.currentContent = self.DBContent["scene"][0]["content"]
+            self.setTable(self.currentContent)
+            self.currentSceneContent = self.DBContent["scene"][0]
+            self.allScenes = self.DBContent["scene"]
 
     # change scene
     def changeScene(self):

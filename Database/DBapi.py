@@ -4,11 +4,6 @@ import time
 import calendar
 import gridfs
 import os
-<<<<<<< Updated upstream
-import io
-# import PIL.Image as Image
-=======
->>>>>>> Stashed changes
 
 from bson.objectid import ObjectId
 
