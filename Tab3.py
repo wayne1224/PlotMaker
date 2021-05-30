@@ -446,7 +446,7 @@ class Tab3(QtWidgets.QWidget):
     # 儲存內容
     def save(self):
         self.saveSceneContent()
-        db.updateContent(self.DBContent["BasicID"], self.allScenes)
+        db.updateContent(self.basicID, self.allScenes)
         self.msg_save.exec_()
 
     '''
