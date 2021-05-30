@@ -342,7 +342,6 @@ class Tab3(QtWidgets.QWidget):
         if isNew:  # 新的一幕
             self.allScenes.append(self.currentSceneContent)
         print(self.allScenes)
-        db.updateContent(self.DBContent["BasicID"], self.allScenes)
 
     # change to new scene
     def _newScene(self):
@@ -406,6 +405,7 @@ class Tab3(QtWidgets.QWidget):
     # 儲存內容
     def save(self):
         self.saveSceneContent()
+        db.updateContent(self.DBContent["BasicID"], self.allScenes)
 
     # 檢查、更新角色選單
     def _checkCharacter(self):
