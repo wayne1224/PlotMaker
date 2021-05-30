@@ -94,9 +94,9 @@ def upsertBasic(data , objID = None):
             name = list()
 
             for i in data["characters"]:
-                name.extend(i["name"])
+                name.append(i["name"])
 
-            Content.update_one({"Basic_ID" : objID} , {"$set" : {"plotName" : data["plotName"] , "characters" : name}})
+            Content.update_one({"BasicID" : objID} , {"$set" : {"plotName" : data["plotName"] , "characters" : name}})
 
             return True
         except pymongo.errors.PyMongoError as e:

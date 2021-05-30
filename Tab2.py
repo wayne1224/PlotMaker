@@ -207,7 +207,9 @@ class Character(QtWidgets.QGroupBox):
         self.input_Actor.setStyleSheet("")
 
     def getName(self):
-        return self.input_Role.text()
+        if self.input_Role.text() != '':
+            return self.input_Role.text()
+        
 
     def selectPhoto(self):
         filePath, _ = QtWidgets.QFileDialog.getOpenFileName(None,  
