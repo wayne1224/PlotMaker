@@ -77,6 +77,12 @@ def findContent(objID):
 def upsertBasic(data , objID = None):
     Basic = db["Basic"]
     Content = db["Content"] 
+    
+    name = list()
+
+    for i in data["characters"]:
+        name.append(i["name"])
+    
     #update
     if objID:
         try:
@@ -90,12 +96,7 @@ def upsertBasic(data , objID = None):
                                                         }
                                                 }
             )
-            
-            name = list()
-
-            for i in data["characters"]:
-                name.append(i["name"])
-
+        
             Content.update_one({"BasicID" : objID} , {"$set" : {"plotName" : data["plotName"] , "characters" : name}})
 
             return True
@@ -105,7 +106,7 @@ def upsertBasic(data , objID = None):
     else:     
         try:
             BasicID = Basic.insert_one(data).inserted_id
-            Content.insert_one({"BasicID" : BasicID , "plotName" : None , "characters" : None , "scene" : None})
+            Content.insert_one({"BasicID" : BasicID , "plotName" : data["plotName"] , "characters" : name , "scene" : None})
             return True
         except pymongo.errors.PyMongoError as e:
             return False   
@@ -141,6 +142,13 @@ def findImg(objID):
     except pymongo.errors.PyMongoError as e:
         return False
 
+# delete all documents
+def deleteMongodb():
+    db["Basic"].delete_many({})
+    db["Content"].delete_many({})
+    db["fs.chunks"].delete_many({})
+    db["fs.files"].delete_many({})
+
 objID = ObjectId("60abb3d055497c23f46a9aae")
 path = 'C:\\Users\\HAO\\Desktop\\Pic\\image0.jpg'
 
@@ -155,26 +163,6 @@ data = {
 scene = [ {"num" : 1 , "title" : "001" , "outline" : "001" , "content" : {"role" : "A" , "utterance" : "FUCK UP" , "scenario" : "情境"}},
           {"num" : 2 , "title" : "002" , "outline" : "002" , "content" : {"role" : "A" , "utterance" : "FUCK UP" , "scenario" : "情境"}}]
 
-connectDB()
-
-# for i in findDocs("" , "" , "本名1"):
-#     print(i)
-
-# print(upsertBasic(data))
-
-# print(insertImg(path))
-img = findImg(objID)
-
-# import io
-# import PIL.Image as Image
-# img = Image.open(io.BytesIO(img))
-# img.show()
-
-def deleteMongodb():
-    db["Basic"].delete_many({})
-    db["Content"].delete_many({})
-    db["fs.chunks"].delete_many({})
-    db["fs.files"].delete_many({})
-
+# connectDB()
 # deleteMongodb()
 
