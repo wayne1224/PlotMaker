@@ -245,6 +245,7 @@ class Tab3(QtWidgets.QWidget):
         self.currentContent = []  # 目前幕的角色台詞
         self.currentSceneContent = {}  # 目前幕的所有內容
         self.allScenes = []  # 全部幕的內容
+        self.DBContent = {}  # 匯入的資料
 
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
@@ -281,6 +282,15 @@ class Tab3(QtWidgets.QWidget):
         self.cmb_character.addItem("")
         self.cmb_character.addItem("語境")
         self.tableWidget.setRowCount(0)
+
+    @QtCore.pyqtSlot(dict)
+    def importContent(self, content):
+        self.clearInput()
+        self.clearSceneInput()
+        self.DBContent = content
+        if self.DBContent["scene"]:
+            for i in range(self.DBContent["scene"].__len__()):
+                print("y")
 
     # change scene
     def changeScene(self):
@@ -319,6 +329,7 @@ class Tab3(QtWidgets.QWidget):
         if isNew:  # 新的一幕
             self.allScenes.append(self.currentSceneContent)
         print(self.allScenes)
+        db.updateContent(self.DBContent["BasicID"], self.allScenes)
 
     # change to new scene
     def _newScene(self):
