@@ -231,7 +231,6 @@ class Tab3(QtWidgets.QWidget):
         self.input_utterance.returnPressed.connect(self._addRow)
         self.input_scenario.returnPressed.connect(self._addRow)
         self.btn_deleteRow.clicked.connect(self._deleteRow)
-        #self.tableWidget.cellClicked.connect(self._checkCharacter)
 
         # 視窗
         # 輸入數字以外的幕數
@@ -391,29 +390,6 @@ class Tab3(QtWidgets.QWidget):
             self.allScenes.append(self.currentSceneContent)
         print(self.allScenes)
 
-    '''
-    # change to new scene
-    def _newScene(self):
-        newScene = self.cmb_sceneNum.currentText()
-        self.cmb_sceneNum.addItem(self.cmb_sceneNum.currentText())
-        self.sceneNum.append(int(newScene))
-        self.currentSceneNum = int(newScene)
-
-        self.cmb_sceneNum.blockSignals(True)  # 擋住 currentTextChanged signal
-
-        # 排序
-        temp = []
-        for i in range(self.cmb_sceneNum.count()):
-            temp.append(int(self.cmb_sceneNum.itemText(i)))
-        temp.sort()
-        self.cmb_sceneNum.clear()
-        for i in temp:
-            self.cmb_sceneNum.addItem(i.__str__())
-        
-        self.cmb_sceneNum.setCurrentIndex(self.cmb_sceneNum.findText(self.currentSceneNum.__str__()))
-        self.cmb_sceneNum.blockSignals(False)
-    '''
-
     # set scene
     def setScene(self):
         self.currentSceneContent = {}
@@ -483,24 +459,6 @@ class Tab3(QtWidgets.QWidget):
         db.updateContent(self.basicID, self.allScenes)
         self.msg_save.exec_()
 
-    '''
-    # 檢查、更新角色選單
-    def _checkCharacter(self):
-        checkCharacter = []
-        for index in range(self.tableWidget.rowCount()):
-            if self.tableWidget.item(index, 0):
-                if not self.tableWidget.item(index, 0).text().__len__() == 0:  # 不是空字串
-                    if not self.tableWidget.item(index, 0).text() in checkCharacter:
-                        checkCharacter.append(self.tableWidget.item(index, 0).text())
-
-        self.cmb_character.clear()
-        self.cmb_character.addItem("")
-        self.cmb_character.addItem("語境")
-        for i in checkCharacter:
-            self.cmb_character.addItem(i)
-        self.character = checkCharacter  # 更新角色
-    '''
-
     # set table
     def setTable(self, content):
         if content.__len__() > 0:
@@ -513,7 +471,6 @@ class Tab3(QtWidgets.QWidget):
                 self.tableWidget.setItem(rowCount, 0, character)
                 self.tableWidget.setItem(rowCount, 1, utterance)
                 self.tableWidget.setItem(rowCount, 2, scenario)
-            #self._checkCharacter()
 
     # 新增一列
     def _addRow(self):
@@ -552,7 +509,6 @@ class Tab3(QtWidgets.QWidget):
         if indexes:
             for index in sorted(indexes, reverse=True):
                 self.tableWidget.removeRow(index.row())
-            #self._checkCharacter()
         else:  # 未選取刪除列
             self.msg_deleteNotSelect.exec_()
 
