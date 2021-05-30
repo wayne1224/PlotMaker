@@ -4,11 +4,6 @@ import time
 import calendar
 import gridfs
 import os
-<<<<<<< Updated upstream
-import io
-# import PIL.Image as Image
-=======
->>>>>>> Stashed changes
 
 from bson.objectid import ObjectId
 
@@ -104,7 +99,7 @@ def upsertBasic(data , objID = None):  #  return True , False
       
         try:
             BasicID = Basic.insert_one(data).inserted_id
-            Content.insert_one({"BasicID" : BasicID , "scene" : None})
+            Content.insert_one({"BasicID" : BasicID , "plotName" : None , "scene" : None})
             return True
         except pymongo.errors.PyMongoError as e:
             return False   
@@ -151,7 +146,8 @@ data = {
     "outline" : "outline"
 }
 
-scene = [{"num" : 1 , "title" : "001" , "outline" : "001" , "content" : {"role" : "A" , "utterance" : "FUCK UP" , "scenario" : "情境"}}]
+scene = [ {"num" : 1 , "title" : "001" , "outline" : "001" , "content" : {"role" : "A" , "utterance" : "FUCK UP" , "scenario" : "情境"}},
+          {"num" : 2 , "title" : "002" , "outline" : "002" , "content" : {"role" : "A" , "utterance" : "FUCK UP" , "scenario" : "情境"}}]
 
 connectDB()
 
@@ -167,3 +163,12 @@ img = findImg(objID)
 # import PIL.Image as Image
 # img = Image.open(io.BytesIO(img))
 # img.show()
+
+def deleteMongodb():
+    db["Basic"].delete_many({})
+    db["Content"].delete_many({})
+    db["fs.chunks"].delete_many({})
+    db["fs.files"].delete_many({})
+
+# deleteMongodb()
+
