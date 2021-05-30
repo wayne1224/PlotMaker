@@ -524,8 +524,8 @@ class Tab2(QtWidgets.QWidget):
             char = self.rolesLayout.itemAt(i).widget()
             if char != None:
                 characterNames.append(char.getName())
-        return characterNames
-
+        return list(filter(None, characterNames))
+  
     def save(self):
         if self.isEmpty() == False:
             Basic = self._getCurrentDoc()
@@ -555,7 +555,7 @@ class Tab2(QtWidgets.QWidget):
             self.input_name.setStyleSheet("")
             self.input_author.setStyleSheet("")
             self.comboBox.setStyleSheet("")
-
+            print(self.getCharacterNames())
             content = {'BasicID': self._id, 'plotName':Basic['plotName'], 'characters': self.getCharacterNames()}
             self.procCont.emit(content)
 
