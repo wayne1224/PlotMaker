@@ -236,6 +236,11 @@ class Tab3(QtWidgets.QWidget):
         self.msg_deleteNotSelect.setWindowTitle("提示")
         self.msg_deleteNotSelect.setText("請選取至少一整列刪除！")
         self.msg_deleteNotSelect.setIcon(QtWidgets.QMessageBox.Information)
+        # 儲存成功
+        self.msg_save = QtWidgets.QMessageBox()
+        self.msg_save.setWindowTitle("提示")
+        self.msg_save.setText("儲存成功！")
+        self.msg_save.setIcon(QtWidgets.QMessageBox.Information)
 
         self.basicID = None  # BasicID
         self.plotName = ""  # 劇名
@@ -427,6 +432,7 @@ class Tab3(QtWidgets.QWidget):
     def save(self):
         self.saveSceneContent()
         db.updateContent(self.DBContent["BasicID"], self.allScenes)
+        self.msg_save.exec_()
 
     '''
     # 檢查、更新角色選單
