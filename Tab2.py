@@ -584,7 +584,7 @@ class Tab2(QtWidgets.QWidget):
             self.photoID = None
 
         for i, char in enumerate(doc['characters']):
-            if i > 2:
+            if i >= self.rolesLayout.count():
                 self._addCharacter()
             self.rolesLayout.itemAt(i).widget().setup(char)
         
