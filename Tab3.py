@@ -1,4 +1,3 @@
-from Tab2 import Character
 from PyQt5 import QtCore, QtGui, QtWidgets
 import Database.DBapi as db
 import sys

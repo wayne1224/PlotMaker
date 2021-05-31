@@ -37,7 +37,6 @@ QPushButton#addRole_btn:hover
     color:white;
     background-color:#07da63; 
     padding: 12px;
-    
 }
 
 QPushButton#save_btn:hover
@@ -51,5 +50,24 @@ QPushButton#clear_btn:hover
 {
     color:white;
     background-color:#ff4747; 
+    padding: 12px;
+}
+
+QPushButton#addRole_btn:pressed
+{
+    background-color:#06c258;
+}
+
+QPushButton#save_btn:pressed
+{
+    color:white;
+    background-color:#187cbd; 
+    padding: 12px;
+}
+
+QPushButton#clear_btn:pressed
+{
+    color:white;
+    background-color:#ff2424; 
     padding: 12px;
 }
