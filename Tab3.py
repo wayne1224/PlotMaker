@@ -274,6 +274,8 @@ class Tab3(QtWidgets.QWidget):
         self.allScenes = []  # 全部幕的內容
         self.DBContent = {}  # 匯入的資料
 
+        self.setStyleSheet(open("QSS/Tab3.qss", "r").read())
+
     def retranslateUi(self):
         _translate = QtCore.QCoreApplication.translate
         self.lbl_plotName.setText(_translate("", "劇名："))

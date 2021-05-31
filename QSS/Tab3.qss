@@ -1,0 +1,87 @@
+QPushButton#btn_add, QPushButton#btn_addScene {
+    font: "Microsoft YaHei UI";
+    font-weight: bold;
+    color:white;
+    background-color:#06c258;
+    border-style: outset;
+    border-width: 3px;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+QPushButton#btn_save {
+    font: "Microsoft YaHei UI";
+    font-weight: bold;
+    color:white;
+    background-color:#187cbd;
+    border-style: outset;
+    border-width: 3px;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+QPushButton#btn_deleteRow, QPushButton#btn_deleteScene {
+    font: "Microsoft YaHei UI";
+    font-weight: bold;
+    color:white;
+    background-color:#ff2424;
+    border-style: outset;
+    border-width: 3px;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+
+QPushButton#btn_add:hover, QPushButton#btn_addScene:hover
+{
+    color:white;
+    background-color:#07da63; 
+    padding: 12px;
+    
+}
+
+QPushButton#btn_save:hover
+{
+    color:white;
+    background-color:#2a9df4; 
+    padding: 12px;
+}
+
+QPushButton#btn_deleteRow:hover, QPushButton#btn_deleteScene:hover
+{
+    color:white;
+    background-color:#ff4747; 
+    padding: 12px;
+}
+
+QComboBox
+{ 
+    border:1px solid gray;
+    border-radius:3px;
+    padding: 5px;
+}
+
+QComboBox::drop-down
+{
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 20px;
+
+    border-left-width: 1px;
+    border-left-color: darkgray;
+    border-left-style: solid; /* just a single line */
+    border-top-right-radius: 3px; /* same radius as the QComboBox */
+    border-bottom-right-radius: 3px;
+}
+
+QComboBox QAbstractItemView
+{
+    border: 2px solid #4E6D8C;
+}
+
+QComboBox::down-arrow
+{
+    image: url(image/dropdown-arrow.jpg);
+    width: 10px;
+    height: 10px;
+}
