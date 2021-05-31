@@ -404,6 +404,7 @@ class Tab2(QtWidgets.QWidget):
         self.label_5.setObjectName("label_5")
         self.addRole_btn = QtWidgets.QPushButton()
         self.addRole_btn.setFont(font)
+        self.addRole_btn.setObjectName("addRole_btn")
         spacerItem = QtWidgets.QSpacerItem(40, 20, QtWidgets.QSizePolicy.Expanding, QtWidgets.QSizePolicy.Preferred)
         self.horizontalLayout_action = QtWidgets.QHBoxLayout()
         self.horizontalLayout_action.addWidget(self.label_5)
@@ -431,8 +432,10 @@ class Tab2(QtWidgets.QWidget):
         self.actionLayout = QtWidgets.QHBoxLayout()
         self.clear_btn = QtWidgets.QPushButton()
         self.clear_btn.setFont(font)
+        self.clear_btn.setObjectName("clear_btn")
         self.save_btn = QtWidgets.QPushButton()
         self.save_btn.setFont(font)
+        self.save_btn.setObjectName("save_btn")
         self.actionLayout.addWidget(self.clear_btn)
         self.actionLayout.addItem(spacerItem)
         self.actionLayout.addWidget(self.save_btn)
@@ -480,6 +483,9 @@ class Tab2(QtWidgets.QWidget):
         self.photoPath = None
         self.cwd = os.getcwd() #目前檔案位置
         self.currentDoc = {'plotName': '', 'author': '', 'outline': '', 'type': [], 'characters': []} #檢查是否修改
+
+        #設定tab的css
+        self.setStyleSheet(open("QSS/Tab2.qss", "r").read())
 
         self.retranslateUi()
 

@@ -1,0 +1,55 @@
+QPushButton#addRole_btn {
+    font: "Microsoft YaHei UI";
+    font-weight: bold;
+    color:white;
+    background-color:#06c258;
+    border-style: outset;
+    border-width: 3px;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+QPushButton#save_btn {
+    font: "Microsoft YaHei UI";
+    font-weight: bold;
+    color:white;
+    background-color:#187cbd;
+    border-style: outset;
+    border-width: 3px;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+QPushButton#clear_btn {
+    font: "Microsoft YaHei UI";
+    font-weight: bold;
+    color:white;
+    background-color:#ff2424;
+    border-style: outset;
+    border-width: 3px;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+
+QPushButton#addRole_btn:hover
+{
+    color:white;
+    background-color:#07da63; 
+    padding: 12px;
+    
+}
+
+QPushButton#save_btn:hover
+{
+    color:white;
+    background-color:#2a9df4; 
+    padding: 12px;
+}
+
+QPushButton#clear_btn:hover 
+{
+    color:white;
+    background-color:#ff4747; 
+    padding: 12px;
+}

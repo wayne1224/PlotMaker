@@ -1,0 +1,12 @@
+QTabWidget::pane { /* The tab widget frame */
+    /* border: 5px solid #C2C7CB; */
+}
+
+QTabBar::tab { 
+    height: 40px; 
+    width: 250px;
+    /* background-color:white; */
+}
+QTabBar::tab:selected{
+    background-color:#2a9df4;
+}

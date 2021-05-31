@@ -44,7 +44,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.tab3 = Tab3()
 
         #設定tab的css
-        self.setStyleSheet( "QTabBar::tab { height: 40px; width: 250px; }")
+        #self.setStyleSheet( "QTabBar::tab { height: 40px; width: 250px; }")
+        self.setStyleSheet(open("QSS/MainWindow.qss", "r").read())
   
         #將tab加入MainWindow中
         self.mainTab.addTab(self.tab1, "查詢頁面")
