@@ -31,6 +31,20 @@ QPushButton#clear_btn {
     padding: 10px;
 }
 
+QPushButton#deletePhoto_btn {
+    background-color:#ff8f8f;
+}
+
+QPushButton#photo_btn {
+    background-color:#faf3c0;
+}
+
+QPushButton#delete_btn {
+    font: "Microsoft YaHei UI";
+    font-weight: bold;
+    background-color:#ff6666;
+}
+
 
 QPushButton#addRole_btn:hover
 {
@@ -71,3 +85,7 @@ QPushButton#clear_btn:pressed
     background-color:#ff2424; 
     padding: 12px;
 }
+QGroupBox {
+    background-color:#FFFFFF;
+}
+
