@@ -25,6 +25,7 @@ class MainWindow(QtWidgets.QMainWindow):
         super(MainWindow, self).__init__()
         self.resize(1393, 870)
         self.setWindowTitle("PlotMaker")
+        self.setWindowIcon(QtGui.QIcon("image/PlotMaker.png"))
         self.mainTab = QtWidgets.QTabWidget()
         self.setCentralWidget(self.mainTab)
 
