@@ -85,3 +85,8 @@ QComboBox::down-arrow
     width: 10px;
     height: 10px;
 }
+
+QLineEdit
+{
+    height: 30px;
+}

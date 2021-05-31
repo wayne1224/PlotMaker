@@ -2,11 +2,25 @@ QTabWidget::pane { /* The tab widget frame */
     /* border: 5px solid #C2C7CB; */
 }
 
+QApplication
+{
+    background-color: white;
+}
+
 QTabBar::tab { 
+    width: 462%;
     height: 40px; 
-    width: 250px;
+    color: white;
+    font-size: 20px;
+    font-family: "Courier New";
+    font-weight: bold;
+    border: 1px solid;
+    border-color: black;
+    background-color:rgb(141, 93, 93);
     /* background-color:white; */
 }
+
 QTabBar::tab:selected{
-    background-color:#2a9df4;
+    border-bottom-color: white;
+    background-color:rgb(173, 116, 116);
 }
