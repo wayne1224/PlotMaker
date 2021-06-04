@@ -194,7 +194,9 @@ class Character(QtWidgets.QGroupBox):
     
     def setup(self, char):
         self.input_Role.setText(char['name'])
+        self.input_Role.setCursorPosition(0)
         self.input_Actor.setText(char['actor'])
+        self.input_Actor.setCursorPosition(0)
         self.input_Desc.setPlainText(char['description'])
         try:
             self.photoID = char['photo']
@@ -585,7 +587,9 @@ class Tab2(QtWidgets.QWidget):
         #匯入
         self._id = doc['_id']
         self.input_name.setText(doc['plotName'])
+        self.input_name.setCursorPosition(0)
         self.input_author.setText(doc['author'])
+        self.input_author.setCursorPosition(0)
         self.textEdit.setPlainText(doc['outline'])
         self.comboBox.setCheckState(doc['type'])
 
