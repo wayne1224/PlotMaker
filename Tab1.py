@@ -133,8 +133,9 @@ class Tab1(QtWidgets.QWidget):
         self.tableWidget.horizontalHeader().setSectionResizeMode(4, QtWidgets.QHeaderView.ResizeToContents)
         self.tableWidget.horizontalHeader().setSectionResizeMode(5, QtWidgets.QHeaderView.ResizeToContents)
         self.tableWidget.horizontalHeader().setSectionResizeMode(6, QtWidgets.QHeaderView.ResizeToContents)
-
         self.tableWidget.setContentsMargins(20, 0, 20, 0)
+
+        self.setStyleSheet(open("QSS/Tab1.qss", "r").read())
 
         self.retranslateUi()
         QtCore.QMetaObject.connectSlotsByName(self)
@@ -145,7 +146,7 @@ class Tab1(QtWidgets.QWidget):
         self.label_SLP.setText(_translate("self", "劇名："))
         self.label_caseID.setText(_translate("self", "作者："))
         self.label_actor.setText(_translate("self", " 演員："))
-        self.button_search.setText(_translate("self", "      查詢     "))
+        self.button_search.setText(_translate("self", "  查詢  "))
         item = self.tableWidget.horizontalHeaderItem(0)
         item.setText(_translate("self", "劇名"))
         item = self.tableWidget.horizontalHeaderItem(1)

@@ -1,0 +1,24 @@
+QPushButton#button_search {
+    font: "Microsoft YaHei UI";
+    font-weight: bold;
+    color:white;
+    background-color:#FFBF00;
+    border-style: outset;
+    border-width: 3px;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+QPushButton#button_search:hover
+{
+    color:white;
+    background-color:#FFCC32; 
+    padding: 12px;
+}
+
+QPushButton#button_search:pressed
+{
+    color:white;
+    background-color:#FFBF00; 
+    padding: 12px;
+}
