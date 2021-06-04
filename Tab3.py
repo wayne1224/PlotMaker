@@ -500,7 +500,7 @@ class Tab3(QtWidgets.QWidget):
             self.tableWidget.setItem(rowCount, 1, utterance)
             self.tableWidget.setItem(rowCount, 2, scenario)
 
-            if not self.cmb_character.currentText() in self.character:  # 新的角色
+            if not self.cmb_character.currentText() in self.character and not self.cmb_character.currentText() == '語境':  # 新的角色
                 self.character.append(self.cmb_character.currentText())
                 self.cmb_character.addItem(self.cmb_character.currentText())  # 在角色選單新增新的角色
 
