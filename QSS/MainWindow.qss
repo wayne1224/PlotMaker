@@ -2,6 +2,10 @@ QTabWidget::pane { /* The tab widget frame */
     /* border: 5px solid #C2C7CB; */
 }
 
+QWidget {
+    background-color: white;
+}
+
 QTabBar::tab { 
     height: 40px; 
     color: white;
