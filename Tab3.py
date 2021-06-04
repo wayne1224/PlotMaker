@@ -19,6 +19,7 @@ class Tab3(QtWidgets.QWidget):
         self.lbl_plotName.setObjectName("lbl_plotName")
         self.horizontalLayout.addWidget(self.lbl_plotName)
         self.lbl_impPlotName = QtWidgets.QLabel()
+        self.lbl_impPlotName.setContentsMargins(-1, -1, 10, -1)
         font = QtGui.QFont()
         font.setPointSize(12)
         self.lbl_impPlotName.setFont(font)
