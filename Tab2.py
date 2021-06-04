@@ -617,7 +617,7 @@ class Tab2(QtWidgets.QWidget):
         filePath, _ = QtWidgets.QFileDialog.getOpenFileName(None,  
                                     "開啟圖片",  
                                     self.cwd, # 起始路径 
-                                    "Image Files(*.png *.jpg *.bmp)")
+                                    "Image Files(*.png *.jpg *.bmp *.jpeg)")
         if filePath and os.path.exists(filePath):
             self.label_photo.setPixmap(QtGui.QPixmap(filePath))
             self.photoPath = filePath
