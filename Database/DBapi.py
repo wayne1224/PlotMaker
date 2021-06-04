@@ -34,7 +34,7 @@ def findDocs(plotName , author , actor):
         query = dict()
 
         if plotName:
-            query["plotName"] = plotName
+            query["plotName"] = {"$regex" : plotName}
         if author:
             query["author"] = author
         if actor:
@@ -148,20 +148,6 @@ def deleteMongodb():
     db["Content"].delete_many({})
     db["fs.chunks"].delete_many({})
     db["fs.files"].delete_many({})
-
-objID = ObjectId("60abb3d055497c23f46a9aae")
-path = 'C:\\Users\\HAO\\Desktop\\Pic\\image0.jpg'
-
-data = {
-    "plotName" : "plotName",
-    "author" : "author",
-    "characters" : [{"name" : "戲名1" , "actor" : "本名1" , "objID" : "001"} ,{"name" : "戲名2" , "actor" : "本名2" , "objID" : "002"}],
-    "type" : " type",
-    "outline" : "outline"
-}
-
-scene = [ {"num" : 1 , "title" : "001" , "outline" : "001" , "content" : {"role" : "A" , "utterance" : "FUCK UP" , "scenario" : "情境"}},
-          {"num" : 2 , "title" : "002" , "outline" : "002" , "content" : {"role" : "A" , "utterance" : "FUCK UP" , "scenario" : "情境"}}]
 
 # connectDB()
 # deleteMongodb()
