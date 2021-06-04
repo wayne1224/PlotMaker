@@ -27,8 +27,8 @@ class MainWindow(QtWidgets.QMainWindow):
         self.setWindowTitle("PlotMaker")
         self.setWindowIcon(QtGui.QIcon("image/PlotMaker.png"))
         self.mainTab = QtWidgets.QTabWidget()
-        #self.mainTab.tabBar().setDocumentMode(True)
-        #self.mainTab.tabBar().setExpanding(True)
+        self.mainTab.tabBar().setDocumentMode(True)
+        self.mainTab.tabBar().setExpanding(True)
         self.setCentralWidget(self.mainTab)
 
         #資料庫連接失敗 直接關閉程式

@@ -2,13 +2,7 @@ QTabWidget::pane { /* The tab widget frame */
     /* border: 5px solid #C2C7CB; */
 }
 
-QApplication
-{
-    background-color: white;
-}
-
 QTabBar::tab { 
-    width: 462%;
     height: 40px; 
     color: white;
     font-size: 20px;
@@ -21,6 +15,11 @@ QTabBar::tab {
 }
 
 QTabBar::tab:selected{
+    border-bottom-color: white;
+    background-color:rgb(173, 116, 116);
+}
+
+QTabBar::tab:hover{
     border-bottom-color: white;
     background-color:rgb(173, 116, 116);
 }
