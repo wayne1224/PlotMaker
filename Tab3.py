@@ -328,7 +328,8 @@ class Tab3(QtWidgets.QWidget):
         self.clearInput()
         self.clearSceneInput()
 
-        self.DBContent = content
+        print(content)
+        self.DBContent = content.copy()
         self.basicID = self.DBContent["BasicID"]
         self.plotName = self.DBContent["plotName"]
         self.lbl_impPlotName.setText(self.plotName)
@@ -347,9 +348,9 @@ class Tab3(QtWidgets.QWidget):
             self.outline = self.DBContent["scene"][0]["outline"]
             self.input_sceneTitle.setText(self.title)
             self.txt_sceneOutline.setText(self.outline)
-            self.currentSceneContent = self.DBContent["scene"][0]
+            self.currentSceneContent = self.DBContent["scene"][0].copy()
             self.setTable(self.currentSceneContent["content"])
-            self.allScenes = self.DBContent["scene"]
+            self.allScenes = self.DBContent["scene"].copy()
         
         self.cmb_sceneNum.blockSignals(False)
 
