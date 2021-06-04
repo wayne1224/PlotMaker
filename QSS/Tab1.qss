@@ -22,3 +22,49 @@ QPushButton#button_search:pressed
     background-color:#FFBF00; 
     padding: 12px;
 }
+QPushButton#deleteBtn {
+    font: "Microsoft YaHei UI";
+    font-weight: bold;
+    color:white;
+    background-color:#ff2424;
+    border-style: outset;
+    border-width: 3px;
+    border-radius: 10px;
+    padding: 10px;
+}
+QPushButton#deleteBtn:hover 
+{
+    color:white;
+    background-color:#ff4747; 
+    padding: 12px;
+}
+QPushButton#deleteBtn:pressed
+{
+    color:white;
+    background-color:#ff2424; 
+    padding: 12px;
+}
+
+QPushButton#importBtn {
+    font: "Microsoft YaHei UI";
+    font-weight: bold;
+    color:white;
+    background-color:#187cbd;
+    border-style: outset;
+    border-width: 3px;
+    border-radius: 10px;
+    padding: 10px;
+}
+QPushButton#importBtn:hover
+{
+    color:white;
+    background-color:#2a9df4; 
+    padding: 12px;
+}
+
+QPushButton#importBtn:pressed
+{
+    color:white;
+    background-color:#187cbd; 
+    padding: 12px;
+}
