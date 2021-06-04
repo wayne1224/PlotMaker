@@ -239,9 +239,9 @@ class Tab1(QtWidgets.QWidget):
         if delete == QtWidgets.QMessageBox.Yes:
             if Database.DBapi.deleteDocs(objID):
                 self.tableWidget.removeRow(i)
-                informBox = QtWidgets.QMessageBox.information(self, '成功','成功刪除個案', QtWidgets.QMessageBox.Ok)
+                informBox = QtWidgets.QMessageBox.information(self, '成功','成功刪除此劇本', QtWidgets.QMessageBox.Ok)
             else:
-                informBox = QtWidgets.QMessageBox.critical(self, '失敗','刪除個案失敗', QtWidgets.QMessageBox.Ok)
+                informBox = QtWidgets.QMessageBox.critical(self, '失敗','刪除劇本失敗', QtWidgets.QMessageBox.Ok)
         pass
 
 if __name__ == "__main__":
