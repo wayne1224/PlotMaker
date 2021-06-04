@@ -36,9 +36,9 @@ def findDocs(plotName , author , actor):
         if plotName:
             query["plotName"] = {"$regex" : plotName}
         if author:
-            query["author"] = author
+            query["author"] = {"$regex" : author}
         if actor:
-            query["characters.actor"] = actor
+            query["characters.actor"] = {"$regex" : actor}
 
         if Basic.count_documents(query) == 0:
             print("can not find this document")
